@@ -17,6 +17,10 @@ dist-ssr
 .env.*
 !.env.example
 
+# python caches inside tooling scripts
+__pycache__/
+*.pyc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
