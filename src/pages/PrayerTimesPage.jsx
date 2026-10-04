@@ -14,11 +14,18 @@ import bgImage from "../assets/photos/prayer-hero.jpg";
 import {
   getNextFridayFormatted,
   getLastFridayOfMonth,
+  formatDateKeyLong,
 } from "../lib/prayerTimes";
+import useJumuah from "../lib/useJumuah";
 
 export default function PrayerTimesPage() {
   const nextFriday = getNextFridayFormatted(new Date());
   const lastFriMonth = getLastFridayOfMonth(new Date());
+  const jumuah = useJumuah();
+  const jumuahDate = formatDateKeyLong(jumuah.dateKey) || nextFriday;
+  const jumuahParts = jumuah.athan.match(/^(.+?)\s+([AP]M)$/i);
+  const jumuahTime = jumuahParts ? jumuahParts[1] : jumuah.athan;
+  const jumuahMeridiem = jumuahParts ? jumuahParts[2] : "";
 
   return (
     <>
@@ -102,7 +109,7 @@ export default function PrayerTimesPage() {
                           Next Jumu'ah
                         </p>
                         <p className="mt-1 text-[14.5px] leading-relaxed text-muted">
-                          {nextFriday} — Levels 1 &amp; 2, Haldon Street Waqf
+                          {jumuahDate} — Levels 1 &amp; 2, Haldon Street Waqf
                           Building, Lakemba.
                         </p>
                       </div>
@@ -119,9 +126,9 @@ export default function PrayerTimesPage() {
                         Every Friday
                       </p>
                       <p className="mt-4 font-display text-[clamp(52px,8vw,88px)] leading-none font-bold tracking-[-0.03em]">
-                        12:15
+                        {jumuahTime}
                         <span className="ml-3 text-[clamp(20px,2.5vw,28px)] font-medium tracking-normal text-white/70">
-                          PM
+                          {jumuahMeridiem}
                         </span>
                       </p>
                       <p className="mt-4 text-[15px] text-white/70">
@@ -130,7 +137,7 @@ export default function PrayerTimesPage() {
                       <div className="mt-8 flex flex-wrap items-center gap-4 text-[13.5px] text-white/75">
                         <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
                           <CalendarBlank size={15} weight="duotone" />
-                          {nextFriday}
+                          {jumuahDate}
                         </span>
                         <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
                           <Clock size={15} weight="duotone" />

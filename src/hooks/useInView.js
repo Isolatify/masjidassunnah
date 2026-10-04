@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
-export default function useInView(options = {}) {
+// Stable identity so the effect doesn't re-run (observer churn) every render.
+const DEFAULT_OPTIONS = {
+  threshold: 0.15,
+  rootMargin: "0px 0px -8% 0px",
+};
+
+export default function useInView(options = DEFAULT_OPTIONS) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
 
@@ -18,7 +24,7 @@ export default function useInView(options = {}) {
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px", ...options }
+      { ...DEFAULT_OPTIONS, ...options }
     );
     observer.observe(el);
     return () => observer.disconnect();

@@ -91,7 +91,7 @@ export default function Livestream() {
               href={video ? `https://www.youtube.com/watch?v=${video.id}` : SOCIALS.youtube.url}
               target="_blank"
               rel="noreferrer"
-              className="mt-4 flex items-start justify-between gap-3 text-[13.5px] text-white/65 transition-colors hover:text-gold"
+              className="mt-4 flex items-start justify-between gap-3 py-1 text-[13.5px] text-white/65 transition-colors hover:text-gold"
             >
               <span className="line-clamp-1">
                 {video ? video.title : "Most recent broadcast"}

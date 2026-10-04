@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url("./fonts-generated.css");
 
 /* ══════════════════════════════════════════════
    Design tokens — Tailwind v4 @theme
@@ -42,10 +41,11 @@
   --color-line: #e5e7eb;
   --color-line-soft: #eef1ee;
 
-  /* ── Typography ── */
+  /* ── Typography (MIA: Outfit leads body copy; Inter for labels/UI) ── */
   --font-display: "Outfit", "Korolev", Georgia, serif;
   --font-heading: "Outfit", "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  --font-body: "Outfit", system-ui, sans-serif;
+  --font-label: "Inter", system-ui, sans-serif;
   --font-arabic: "Noto Sans Arabic", "Outfit", sans-serif;
 
   /* ── Radii (soft, rounded identity) ── */
@@ -99,7 +99,7 @@
     margin: 0;
     font-family: var(--font-body);
     font-size: 16px;
-    line-height: 1.65;
+    line-height: 1.625;
     color: var(--color-ink);
     background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;
@@ -252,15 +252,16 @@
     text-align: center;
   }
 
-  /* ── Eyebrow label (MIA overline) ── */
+  /* ── Eyebrow label (MIA label-md: Inter 11/14, 0.14em) ── */
   .eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-family: var(--font-body);
+    font-family: var(--font-label);
     font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--color-gold-deep);
     margin-bottom: 14px;
@@ -275,14 +276,15 @@
     background: var(--color-gold);
   }
 
-  /* ── Display section title (MIA headline-lg) ── */
+  /* ── Display section title (MIA headline-lg: 52/62, 600, -1.232px) ── */
   .section-title {
     font-family: var(--font-heading);
     font-size: clamp(34px, 4.6vw, 52px);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
+    letter-spacing: -0.0237em;
+    line-height: 1.192;
     color: var(--color-ink);
+    text-wrap: balance;
   }
 
   .section-sub {
@@ -305,33 +307,43 @@
     line-height: 2;
   }
 
-  /* ── Scroll reveal ── */
+  /* ── Scroll reveal ──
+     Uses the independent `translate` property (NOT `transform`) so a card
+     can be both `.reveal` and `.tilt` — transform stays free for tilt. */
   .reveal {
     opacity: 0;
-    transform: translateY(28px);
+    translate: 0 28px;
     transition:
-      opacity 1s var(--ease-out),
-      transform 1s var(--ease-out);
-    will-change: opacity, transform;
+      opacity 1s var(--ease-out) var(--reveal-delay, 0ms),
+      translate 1s var(--ease-out) var(--reveal-delay, 0ms);
+    will-change: opacity, translate;
   }
 
   .reveal.is-visible {
     opacity: 1;
-    transform: none;
+    translate: 0 0;
   }
 
-  /* ── Chip (MIA: small, rounded, lightly tinted) ── */
+  /* ── Footer text links: pad the hit area to ~44px on touch without
+     shifting layout (negative margin exactly cancels the padding). ── */
+  .site footer ul a {
+    padding-block: 10px;
+    margin-block: -10px;
+  }
+
+  /* ── Chips (MIA chip token: overlay bg, label-md, 8px 14px, pill) ── */
   .chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     border-radius: var(--radius-pill);
     background: rgba(15, 74, 54, 0.1);
-    padding: 6px 12px;
-    font-family: var(--font-body);
+    padding: 8px 14px;
+    font-family: var(--font-label);
     font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.16em;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--color-primary);
   }
@@ -344,7 +356,7 @@
     border-top: 1px solid var(--color-line);
   }
 
-  /* ── Buttons (MIA: compact, pill, letterspaced) ── */
+  /* ── Buttons (MIA button-primary: label-lg Inter 12/0.12em, pill, 46px) ── */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -353,10 +365,10 @@
     min-height: 46px;
     border-radius: var(--radius-pill);
     padding: 13px 30px;
-    font-family: var(--font-body);
+    font-family: var(--font-label);
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.22em;
+    font-weight: 400;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     transition: all 0.3s var(--ease-out);
     cursor: pointer;
@@ -612,6 +624,103 @@
   .mask-fade-b {
     -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+
+  /* ── Route enter (page transition) ── */
+  .route-view {
+    animation: route-in 0.45s var(--ease-out) both;
+  }
+
+  /* ── 3D tilt cards (pointer-fine only, see Tilt3D.jsx / Reveal tilt) ── */
+  .tilt {
+    position: relative;
+    transform: perspective(1000px)
+      rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transform-style: preserve-3d;
+    transition:
+      transform 0.5s var(--ease-out),
+      translate 1s var(--ease-out),
+      box-shadow 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out),
+      background-color 0.35s var(--ease-out);
+    will-change: transform;
+  }
+
+  /* A card that both reveals and tilts needs one merged transition list —
+     the single `.reveal` / `.tilt` rules would otherwise clobber each other.
+     Tailwind's `transition-all`/`duration-*` utilities would override this
+     (utilities layer), so tilt cards must NOT carry those classes. */
+  .reveal.tilt {
+    transition:
+      opacity 1s var(--ease-out) var(--reveal-delay, 0ms),
+      translate 1s var(--ease-out) var(--reveal-delay, 0ms),
+      transform 0.5s var(--ease-out),
+      box-shadow 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out),
+      background-color 0.35s var(--ease-out);
+  }
+
+  .tilt::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      460px circle at var(--tilt-mx, 50%) var(--tilt-my, 50%),
+      rgba(255, 255, 255, 0.14),
+      transparent 45%
+    );
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    /* Fast follow for the rotation, lift keeps the roomier 1s curve. */
+    .tilt:hover {
+      transition-duration:
+        0.14s, 1s, 0.35s, 0.35s, 0.35s;
+    }
+
+    /* Multi-value durations keep reveal + surface changes smooth while the
+       tilt transform snaps to the fast follow curve. */
+    .reveal.tilt:hover {
+      transition-duration:
+        1s, 1s, 0.14s, 0.35s, 0.35s, 0.35s;
+    }
+
+    .tilt:hover::after {
+      opacity: 1;
+    }
+  }
+
+  /* ── Hero pointer depth (paired with scroll parallax in Hero.jsx) ── */
+  .hero-depth {
+    transform: translate3d(
+        calc(var(--hmx, 0) * 16px),
+        calc(var(--hmy, 0) * 12px),
+        0
+      )
+      scale(1.06);
+    transition: transform 0.7s var(--ease-out);
+    will-change: transform;
+  }
+}
+
+/* Lenis owns the scroll while active — neutralise native smooth scrolling.
+   Unlayered so it beats @layer base's `scroll-behavior: smooth`. */
+html.has-lenis {
+  scroll-behavior: auto;
+}
+
+@keyframes route-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

@@ -3,6 +3,7 @@ import { ArrowDown, EnvelopeSimple, MapPin, Clock } from "@phosphor-icons/react"
 import { Link } from "react-router-dom";
 import heroPhoto from "../assets/photos/hall-wide.jpg";
 import { SITE } from "../config";
+import useJumuah from "../lib/useJumuah";
 
 const FACTS = [
   {
@@ -28,6 +29,13 @@ const FACTS = [
 export default function Hero() {
   const heroRef = useRef(null);
   const bgRef = useRef(null);
+  const jumuah = useJumuah();
+
+  const facts = FACTS.map((f) =>
+    f.label === "Jumu'ah"
+      ? { ...f, value: `Khutbah every Friday, ${jumuah.athan}` }
+      : f
+  );
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -49,7 +57,36 @@ export default function Hero() {
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    // Pointer depth: the photo drifts subtly toward the cursor (fine pointers only).
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onPointer = (e) => {
+      if (reduce.matches) return;
+      const r = hero.getBoundingClientRect();
+      hero.style.setProperty(
+        "--hmx",
+        ((e.clientX - r.left) / r.width - 0.5).toFixed(3)
+      );
+      hero.style.setProperty(
+        "--hmy",
+        ((e.clientY - r.top) / r.height - 0.5).toFixed(3)
+      );
+    };
+    const onPointerLeave = () => {
+      hero.style.setProperty("--hmx", "0");
+      hero.style.setProperty("--hmy", "0");
+    };
+    if (fine.matches) {
+      hero.addEventListener("pointermove", onPointer);
+      hero.addEventListener("pointerleave", onPointerLeave);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      hero.removeEventListener("pointermove", onPointer);
+      hero.removeEventListener("pointerleave", onPointerLeave);
+    };
   }, []);
 
   return (
@@ -60,11 +97,13 @@ export default function Hero() {
     >
       {/* Photo + parallax */}
       <div ref={bgRef} className="absolute inset-0 will-change-transform">
-        <img
-          src={heroPhoto}
-          alt=""
-          className="kenburns h-full w-full object-cover object-center"
-        />
+        <div className="hero-depth h-full w-full">
+          <img
+            src={heroPhoto}
+            alt=""
+            className="kenburns h-full w-full object-cover object-center"
+          />
+        </div>
       </div>
 
       {/* Cinematic tint */}
@@ -80,7 +119,7 @@ export default function Hero() {
         </p>
 
         <h1
-          className="rise mt-5 max-w-4xl text-[clamp(44px,8.5vw,96px)] leading-[0.98] font-bold tracking-[-0.03em] text-white"
+          className="rise mt-5 max-w-4xl text-[clamp(44px,5vw,64px)] leading-[1.203] font-semibold tracking-[-0.038em] text-white"
           style={{ animationDelay: "0.3s" }}
         >
           Welcome to
@@ -120,7 +159,7 @@ export default function Hero() {
           className="rise mt-12 grid gap-px overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md sm:grid-cols-3"
           style={{ animationDelay: "0.75s" }}
         >
-          {FACTS.map((f) => {
+          {facts.map((f) => {
             const inner = (
               <>
                 <f.icon size={16} weight="bold" className="mt-0.5 shrink-0 text-gold" />

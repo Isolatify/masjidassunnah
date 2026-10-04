@@ -46,7 +46,7 @@ export default function LatestMedia() {
               href={SOCIALS.youtube.url}
               target="_blank"
               rel="noreferrer"
-              className="group inline-flex items-center gap-2 font-heading text-[14px] font-medium text-primary transition-colors hover:text-primary-deep"
+              className="group inline-flex items-center gap-2 py-2 font-heading text-[14px] font-medium text-primary transition-colors hover:text-primary-deep"
             >
               See all on YouTube
               <ArrowUpRight

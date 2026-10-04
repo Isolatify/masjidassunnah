@@ -14,6 +14,7 @@ import {
 import { Link } from "react-router-dom";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import Tilt3D from "../components/Tilt3D";
 import storyPhoto from "../assets/photos/hall-minbar-person.jpg";
 import bandPhoto from "../assets/photos/exterior.jpg";
 import heroPhoto from "../assets/photos/about-hero.jpg";
@@ -235,7 +236,8 @@ export default function AboutPage() {
                 <Reveal
                   key={b.title}
                   delay={i * 110}
-                  className="group rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-gold/45 hover:bg-white/[0.07]"
+                  tilt
+                  className="group rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm hover:-translate-y-1.5 hover:border-gold/45 hover:bg-white/[0.07]"
                 >
                   <span className="grid h-14 w-14 place-items-center rounded-full bg-gold/15 text-gold transition-colors duration-500 group-hover:bg-gold group-hover:text-primary-deep">
                     <b.icon size={26} weight="duotone" />
@@ -269,7 +271,7 @@ export default function AboutPage() {
             <div className="grid gap-5 md:grid-cols-2">
               {MILESTONES.map((m, i) => (
                 <Reveal key={m.title} delay={i * 90}>
-                  <article className="group relative h-full overflow-hidden rounded-2xl border border-line-soft bg-surface p-8 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg">
+                  <Tilt3D as="article" className="group relative h-full overflow-hidden rounded-2xl border border-line-soft bg-surface p-8 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg">
                     <span className="pointer-events-none absolute -top-3 right-6 font-display text-[92px] leading-none font-bold text-primary/[0.06] transition-colors duration-500 group-hover:text-primary/[0.11]">
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -285,7 +287,7 @@ export default function AboutPage() {
                     <p className="relative mt-3 text-[14.5px] leading-relaxed text-muted">
                       {m.text}
                     </p>
-                  </article>
+                  </Tilt3D>
                 </Reveal>
               ))}
             </div>
@@ -341,9 +343,10 @@ export default function AboutPage() {
                   : { to: s.to };
                 return (
                 <Reveal key={s.title} delay={(i % 3) * 90}>
-                  <CardTag
+                  <Tilt3D
+                    as={CardTag}
                     {...cardProps}
-                    className="group flex h-full flex-col rounded-2xl border border-line-soft bg-surface p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
+                    className="group flex h-full flex-col rounded-2xl border border-line-soft bg-surface p-7 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
                   >
                     <span className="grid h-14 w-14 place-items-center rounded-full bg-primary-mist text-primary transition-colors duration-500 group-hover:bg-primary group-hover:text-white">
                       <s.icon size={26} weight="duotone" />
@@ -362,7 +365,7 @@ export default function AboutPage() {
                         className="transition-transform duration-300 group-hover:translate-x-1"
                       />
                     </span>
-                  </CardTag>
+                  </Tilt3D>
                 </Reveal>
                 );
               })}

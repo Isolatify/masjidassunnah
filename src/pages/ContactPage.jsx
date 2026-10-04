@@ -13,6 +13,8 @@ import {
 import { SITE, MAPS, SOCIALS, PRAYER_WIDGET_URL } from "../config";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import Tilt3D from "../components/Tilt3D";
+import useJumuah from "../lib/useJumuah";
 
 const CARDS = [
   {
@@ -44,10 +46,10 @@ const ASIDE = [
   {
     icon: CalendarBlank,
     title: "Prayer Times",
-    body: (
+    body: (jumuahTime) => (
       <>
         We are open for all five daily prayers, seven days a week. Jumu'ah
-        khutbah begins at 12:15 PM.
+        khutbah begins at {jumuahTime}.
       </>
     ),
     link: { label: "This week's prayer times", href: PRAYER_WIDGET_URL },
@@ -85,6 +87,7 @@ const FIELD =
   "w-full border-0 border-b border-primary/25 bg-transparent px-0 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-primary";
 
 export default function ContactPage() {
+  const jumuah = useJumuah();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -133,7 +136,7 @@ export default function ContactPage() {
             <div className="grid gap-5 md:grid-cols-3">
               {CARDS.map((c, i) => (
                 <Reveal key={c.title} delay={i * 100}>
-                  <div className="group flex h-full flex-col rounded-2xl border border-line-soft bg-surface p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg">
+                  <Tilt3D className="group flex h-full flex-col rounded-2xl border border-line-soft bg-surface p-7 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg">
                     <span className="grid h-14 w-14 place-items-center rounded-full bg-primary-mist text-primary transition-colors duration-500 group-hover:bg-primary group-hover:text-white">
                       <c.icon size={26} weight="duotone" />
                     </span>
@@ -149,7 +152,7 @@ export default function ContactPage() {
                       href={c.href}
                       target={c.external === false ? undefined : "_blank"}
                       rel="noreferrer"
-                      className="mt-5 inline-flex items-center gap-1.5 text-[13px] font-medium text-primary"
+                      className="mt-5 inline-flex items-center gap-1.5 py-2 text-[13px] font-medium text-primary"
                     >
                       {c.linkLabel}
                       <ArrowSquareOut
@@ -158,7 +161,7 @@ export default function ContactPage() {
                         className="transition-transform duration-300 group-hover:translate-x-0.5"
                       />
                     </a>
-                  </div>
+                  </Tilt3D>
                 </Reveal>
               ))}
             </div>
@@ -292,14 +295,16 @@ export default function ContactPage() {
                             {a.title}
                           </h3>
                           <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">
-                            {a.body}
+                            {typeof a.body === "function"
+                              ? a.body(jumuah.athan)
+                              : a.body}
                           </p>
                           {a.link && (
                             <a
                               href={a.link.href}
                               target="_blank"
                               rel="noreferrer"
-                              className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-medium text-primary"
+                              className="mt-3 inline-flex items-center gap-1.5 py-2 text-[13px] font-medium text-primary"
                             >
                               {a.link.label}
                               <ArrowSquareOut size={14} weight="bold" />

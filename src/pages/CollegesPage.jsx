@@ -498,7 +498,7 @@ export default function CollegesPage() {
                         )}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary transition-colors hover:text-primary-deep"
+                        className="inline-flex items-center gap-1.5 py-2 text-[13px] font-semibold text-primary transition-colors hover:text-primary-deep"
                       >
                         View map
                         <ArrowSquareOut size={13} weight="bold" />

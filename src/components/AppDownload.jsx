@@ -54,7 +54,11 @@ export default function AppDownload() {
   return (
     <section className="section" id="app">
       <div className="container">
-        <Reveal className="overflow-hidden rounded-3xl border border-line-soft bg-gradient-to-br from-bg to-primary-mist/40 lg:grid lg:grid-cols-[1.1fr_0.9fr]">
+        <Reveal
+          tilt
+          tiltMax={5}
+          className="overflow-hidden rounded-3xl border border-line-soft bg-gradient-to-br from-bg to-primary-mist/40 lg:grid lg:grid-cols-[1.1fr_0.9fr]"
+        >
           <div className="p-8 md:p-12 lg:p-14">
             <span className="eyebrow">Masjidbox One</span>
             <h2 className="section-title text-[clamp(30px,4vw,44px)]">

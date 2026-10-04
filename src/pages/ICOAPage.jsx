@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import Tilt3D from "../components/Tilt3D";
 import heroBg from "../assets/photos/library-shelf.jpg";
 
 const ICOA_PROGRAMS = [
@@ -89,7 +90,7 @@ export default function ICOAPage() {
                 <div className="grid gap-5 sm:grid-cols-2">
                   {ICOA_PROGRAMS.map((p, i) => (
                     <Reveal key={p.title} delay={i * 90}>
-                      <div className="h-full rounded-2xl border border-line-soft bg-surface p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg">
+                      <Tilt3D className="h-full rounded-2xl border border-line-soft bg-surface p-7 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg">
                         <span className="grid h-14 w-14 place-items-center rounded-full bg-primary-mist text-primary transition-colors duration-500">
                           <p.icon size={26} weight="duotone" />
                         </span>
@@ -99,7 +100,7 @@ export default function ICOAPage() {
                         <p className="mt-2.5 text-[14.5px] leading-relaxed text-muted">
                           {p.text}
                         </p>
-                      </div>
+                      </Tilt3D>
                     </Reveal>
                   ))}
                 </div>

@@ -169,7 +169,8 @@ export default function Events() {
               <Reveal
                 key={ev.id}
                 delay={i * 100}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-line-soft bg-surface transition-all duration-500 hover:-translate-y-1.5 hover:shadow-lg"
+                tilt
+                className="group flex flex-col overflow-hidden rounded-2xl border border-line-soft bg-surface hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
               >
                 <div className="relative h-48 overflow-hidden bg-bg-slab">
                   {(ev.cover_image || ev.image_url) && (

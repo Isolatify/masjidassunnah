@@ -47,7 +47,8 @@ export default function About() {
             <Reveal
               key={a.title}
               delay={i * 100}
-              className="group rounded-2xl border border-line-soft bg-surface p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
+              tilt
+              className="group rounded-2xl border border-line-soft bg-surface p-7 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
             >
               <span className="grid h-14 w-14 place-items-center rounded-full bg-primary-mist text-primary transition-colors duration-500 group-hover:bg-primary group-hover:text-white">
                 <a.icon size={26} weight="duotone" />
@@ -60,7 +61,7 @@ export default function About() {
               </p>
               <Link
                 to={`/events?audience=${encodeURIComponent(a.title)}`}
-                className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-primary opacity-0 transition-all duration-300 group-hover:opacity-100"
+                className="mt-4 inline-flex items-center gap-1.5 py-2 text-[13px] font-medium text-primary transition-all duration-300 md:opacity-0 md:group-hover:opacity-100"
               >
                 See programs <ArrowRight size={13} weight="bold" />
               </Link>

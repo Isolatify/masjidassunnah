@@ -132,6 +132,42 @@ export async function fetchWeek(force = false) {
   }
 }
 
+let jumuahCache = null;
+
+/**
+ * Next Jumu'ah (khutbah) time straight from the Masjidbox timetable.
+ * The 7-day window always contains a Friday. Returns
+ * `{ athan, iqamah, dateKey }` or null on failure.
+ */
+export async function fetchJumuah() {
+  if (jumuahCache) return jumuahCache;
+  try {
+    const entries = await fetchWindow(null, 7);
+    const withJumuah = entries.filter((e) =>
+      e.prayers.some((p) => p.key === "jumuah" && p.athan !== "--")
+    );
+    const fri =
+      withJumuah.find((e) => e.weekday === 5) || withJumuah[0] || null;
+    if (!fri) return null;
+    const ju = fri.prayers.find((p) => p.key === "jumuah" && p.athan !== "--");
+    jumuahCache = { athan: ju.athan, iqamah: ju.iqamah, dateKey: fri.dateKey };
+    return jumuahCache;
+  } catch {
+    return null;
+  }
+}
+
+export function formatDateKeyLong(dateKey) {
+  if (!dateKey) return null;
+  const d = new Date(`${String(dateKey).slice(0, 10)}T12:00:00`);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-AU", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+}
+
 export function getDayPrayers(week, date) {
   if (!week || !week.length) return null;
   const key = navDateKey(date);

@@ -8,7 +8,7 @@ import logoWhite from "../assets/logo-white.png";
 const toPath = (item) => item.route || "/";
 
 function DesktopLink({ item, active, solid, onNavigate }) {
-  const linkCls = `inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 font-heading text-[13.5px] font-medium tracking-[0.01em] transition-colors duration-300 ${
+  const linkCls = `inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 font-label text-[12px] font-normal uppercase tracking-[0.12em] transition-colors duration-300 ${
     active
       ? solid
         ? "text-primary"
@@ -105,6 +105,7 @@ export default function Topbar() {
   const links = NAV.filter((n) => !n.cta);
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-500 ${
         solid
@@ -168,10 +169,12 @@ export default function Topbar() {
           )}
         </button>
       </div>
+    </header>
 
-      {/* ── Mobile sheet ── */}
+      {/* ── Mobile sheet (outside <header>: backdrop-filter would make the
+             header the containing block and collapse this fixed panel) ── */}
       <div
-        className={`fixed inset-0 top-[76px] z-40 overflow-y-auto bg-surface transition-all duration-500 lg:hidden ${
+        className={`fixed inset-x-0 top-[76px] bottom-0 z-40 overflow-y-auto overscroll-contain bg-surface transition-all duration-500 lg:hidden ${
           open
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-3 opacity-0"
@@ -255,6 +258,6 @@ export default function Topbar() {
           })}
         </nav>
       </div>
-    </header>
+    </>
   );
 }

@@ -204,10 +204,14 @@ export default function PrayerTimesWidget() {
           </button>
         </div>
 
-        <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-line-soft px-3 pb-2.5 text-[10px] font-medium tracking-[0.2em] text-muted uppercase">
+        <div className="grid grid-cols-[1fr_auto_auto] gap-2 border-b border-line-soft px-2 pb-2.5 text-[10px] font-medium tracking-[0.2em] text-muted uppercase sm:gap-4 sm:px-3">
           <span>Prayer</span>
-          <span className="w-[74px] whitespace-nowrap text-right">Athan</span>
-          <span className="w-[74px] whitespace-nowrap text-right">Iqamah</span>
+          <span className="w-[64px] whitespace-nowrap text-right sm:w-[74px]">
+            Athan
+          </span>
+          <span className="w-[64px] whitespace-nowrap text-right sm:w-[74px]">
+            Iqamah
+          </span>
         </div>
 
         {prayers.map((p) => {
@@ -216,7 +220,7 @@ export default function PrayerTimesWidget() {
           return (
             <div
               key={p.name}
-              className={`grid grid-cols-[1fr_auto_auto] items-center gap-4 rounded-xl px-3 py-3 transition-colors duration-300 ${
+              className={`grid grid-cols-[1fr_auto_auto] items-center gap-2 rounded-xl px-2 py-3 transition-colors duration-300 sm:gap-4 sm:px-3 ${
                 active ? "bg-primary-mist" : "hover:bg-bg"
               }`}
             >
@@ -233,11 +237,11 @@ export default function PrayerTimesWidget() {
                   </span>
                 </span>
               </span>
-              <span className="w-[74px] whitespace-nowrap text-right font-heading text-[15px] tabular-nums text-ink-soft">
+              <span className="w-[64px] whitespace-nowrap text-right font-heading text-[15px] tabular-nums text-ink-soft sm:w-[74px]">
                 {p.athan}
               </span>
               <span
-                className={`w-[74px] whitespace-nowrap text-right font-heading text-[15px] font-semibold tabular-nums ${
+                className={`w-[64px] whitespace-nowrap text-right font-heading text-[15px] font-semibold tabular-nums sm:w-[74px] ${
                   active ? "text-primary" : "text-ink"
                 }`}
               >

@@ -34,7 +34,7 @@ export default function Location() {
               </p>
               <a
                 href={SITE.phoneHref}
-                className="inline-flex items-center gap-2 font-heading text-[14.5px] font-medium text-primary transition-colors hover:text-primary-deep"
+                className="inline-flex items-center gap-2 py-2 font-heading text-[14.5px] font-medium text-primary transition-colors hover:text-primary-deep"
               >
                 <Phone size={15} weight="bold" /> {SITE.phone}
               </a>

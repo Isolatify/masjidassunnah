@@ -339,7 +339,7 @@ export default function TimetablePage() {
                     href={PRAYER_WIDGET_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary transition-colors hover:text-primary-deep"
+                    className="inline-flex items-center gap-1.5 py-2 text-[13px] font-medium text-primary transition-colors hover:text-primary-deep"
                   >
                     MasjidBox
                     <ArrowSquareOut size={13} weight="bold" />
