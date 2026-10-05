@@ -257,26 +257,20 @@ export default function EventDetailPage() {
           alt=""
           className="kenburns absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/90 via-primary-deep/70 to-primary-deep/95" />
+        {/* MIA atmospheric hero: dark wash + gradient — artwork reads as texture only */}
+        <div className="absolute inset-0 bg-primary-deep/55" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/55 via-primary-deep/50 to-primary-deep/95" />
 
         <div className="container relative z-10 pt-32 pb-14 md:pb-16">
-          <Link
-            to="/events"
-            className="rise inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[13px] font-medium text-white backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
-            style={{ animationDelay: "0.1s" }}
-          >
-            <ArrowLeft size={15} weight="bold" /> Back to all events
-          </Link>
-
           {audience.length > 0 && (
             <div
-              className="rise mt-6 flex flex-wrap gap-2"
-              style={{ animationDelay: "0.2s" }}
+              className="rise flex flex-wrap gap-2"
+              style={{ animationDelay: "0.1s" }}
             >
               {audience.map((a) => (
                 <span
                   key={a}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-white/90 uppercase backdrop-blur-sm"
+                  className="inline-flex items-center gap-2 rounded-full bg-primary-strong/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.14em] text-white/90 uppercase backdrop-blur-sm"
                 >
                   <i
                     className={`h-1.5 w-1.5 rounded-full ${AUDIENCE_DOT[a] || "bg-emerald-400"}`}
@@ -288,16 +282,16 @@ export default function EventDetailPage() {
           )}
 
           <h1
-            className="rise mt-5 max-w-4xl text-[clamp(34px,5.5vw,64px)] leading-[1.04] font-bold tracking-[-0.03em] text-white"
-            style={{ animationDelay: "0.3s" }}
+            className="rise mt-5 max-w-4xl text-[clamp(34px,5vw,64px)] leading-[1.15] font-semibold tracking-[-0.038em] text-white"
+            style={{ animationDelay: "0.2s" }}
           >
             {event.title}
           </h1>
 
           {event.description && (
             <p
-              className="rise mt-4 font-heading text-[13px] font-semibold tracking-[0.08em] text-gold uppercase"
-              style={{ animationDelay: "0.4s" }}
+              className="rise mt-4 font-heading text-[12px] font-medium tracking-[0.18em] text-gold uppercase"
+              style={{ animationDelay: "0.3s" }}
             >
               {event.description}
             </p>
@@ -305,8 +299,8 @@ export default function EventDetailPage() {
 
           {dates.length > 0 && (
             <div
-              className="rise mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-[14.5px] text-white backdrop-blur-sm"
-              style={{ animationDelay: "0.5s" }}
+              className="rise mt-5 inline-flex items-center gap-2.5 text-[12px] font-medium tracking-[0.14em] text-white uppercase"
+              style={{ animationDelay: "0.4s" }}
             >
               <CalendarBlank size={16} weight="duotone" className="text-gold" />
               {dates[0].date_start
@@ -327,7 +321,21 @@ export default function EventDetailPage() {
               {/* Left: content */}
               <div className="lg:col-span-7 xl:col-span-8">
                 <Reveal>
-                  <span className="eyebrow">About this event</span>
+                  <Link
+                    to="/events"
+                    className="group inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.16em] text-muted uppercase transition-colors hover:text-primary"
+                  >
+                    <ArrowLeft
+                      size={13}
+                      weight="bold"
+                      className="transition-transform duration-300 group-hover:-translate-x-0.5"
+                    />
+                    Back to all events
+                  </Link>
+                </Reveal>
+
+                <Reveal delay={40}>
+                  <span className="eyebrow mt-7">About this event</span>
                 </Reveal>
 
                 {event.content_html && (
@@ -389,10 +397,16 @@ export default function EventDetailPage() {
                           return (
                             <div
                               key={i}
-                              className={`flex flex-wrap items-center gap-5 px-6 py-5 ${
+                              className={`relative flex flex-wrap items-center gap-5 px-6 py-5 ${
                                 i ? "border-t border-line-soft" : ""
                               } ${isNext ? "bg-primary-mist/35" : ""}`}
                             >
+                              {isNext && (
+                                <span
+                                  aria-hidden
+                                  className="absolute inset-y-0 left-0 w-[3px] bg-gold"
+                                />
+                              )}
                               <span className="grid h-16 w-16 shrink-0 place-items-center rounded-xl border border-line bg-bg text-center leading-none">
                                 <span className="font-display text-2xl font-bold text-primary">
                                   {dateObj ? dateObj.getDate() : "–"}
@@ -407,9 +421,10 @@ export default function EventDetailPage() {
                               </span>
                               <div className="min-w-0 flex-1">
                                 <div className="font-heading text-[15.5px] font-semibold">
-                                  {formatDayName(d.date_start)}{" "}
-                                  {dateObj ? dateObj.getFullYear() : ""}
-                                  {d.display ? ` · ${d.display}` : ""}
+                                  {d.display ||
+                                    `${formatDayName(d.date_start)}${
+                                      dateObj ? ` ${dateObj.getFullYear()}` : ""
+                                    }`}
                                 </div>
                                 <div className="mt-0.5 text-[13.5px] text-muted">
                                   {d.date_start && formatDateShort(d.date_start)}
@@ -422,10 +437,10 @@ export default function EventDetailPage() {
                                 </div>
                               </div>
                               {isNext && (
-                                <span className="rounded-full bg-primary px-3.5 py-1.5 text-[10.5px] font-semibold tracking-[0.14em] text-white uppercase">
+                                <span className="rounded-full bg-gold px-3.5 py-1.5 text-[10.5px] font-semibold tracking-[0.14em] text-primary-deep uppercase">
                                   {untilPhrase === "Today"
                                     ? "Today"
-                                    : `Next in ${untilPhrase}`}
+                                    : `Next · in ${untilPhrase}`}
                                 </span>
                               )}
                             </div>
@@ -441,14 +456,14 @@ export default function EventDetailPage() {
                   <Reveal delay={120}>
                     <div className="mt-10">
                       <span className="eyebrow">Frequently Asked</span>
-                      <div className="mt-4 overflow-hidden rounded-2xl border border-line-soft bg-surface">
+                      <div className="mt-4 border-y border-line-soft">
                         {faq.map((f, i) => (
                           <div
                             key={i}
                             className={i ? "border-t border-line-soft" : ""}
                           >
                             <button
-                              className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-bg"
+                              className="flex w-full items-center justify-between gap-4 py-5 text-left"
                               onClick={() =>
                                 setOpenFaq(openFaq === i ? null : i)
                               }
@@ -466,7 +481,7 @@ export default function EventDetailPage() {
                               </span>
                             </button>
                             {openFaq === i && (
-                              <div className="px-6 pb-6 text-[14.5px] leading-relaxed text-muted">
+                              <div className="pb-5 text-[14.5px] leading-relaxed text-muted">
                                 {f.answer}
                               </div>
                             )}
@@ -523,12 +538,12 @@ export default function EventDetailPage() {
                 )}
 
                 <Reveal delay={60}>
-                  <div className="overflow-hidden rounded-2xl border border-line-soft bg-surface shadow-lg lg:sticky lg:top-28">
-                    <div className="bg-gradient-to-br from-primary via-primary-dark to-primary-deep px-7 py-7 text-white">
+                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-primary-deep text-white shadow-xl lg:sticky lg:top-28">
+                    <div className="border-b border-white/10 px-7 pt-7 pb-6">
                       <p className="text-[11px] font-medium tracking-[0.24em] text-gold uppercase">
                         Next Date
                       </p>
-                      <p className="mt-3 font-display text-[22px] leading-snug font-bold">
+                      <p className="mt-3 font-display text-[24px] leading-snug font-semibold">
                         {nextDate
                           ? new Date(nextDate + "T12:00:00").toLocaleDateString(
                               "en-AU",
@@ -542,7 +557,7 @@ export default function EventDetailPage() {
                           : "TBA"}
                       </p>
                       {untilPhrase !== null && (
-                        <p className="mt-3 inline-flex rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] uppercase">
+                        <p className="mt-3 block text-[11px] font-medium tracking-[0.16em] text-white/55 uppercase">
                           {untilPhrase === "Today"
                             ? "Today"
                             : `In ${untilPhrase}`}
@@ -550,19 +565,19 @@ export default function EventDetailPage() {
                       )}
                     </div>
 
-                    <div className="divide-y divide-line-soft">
+                    <div className="divide-y divide-white/10">
                       {audienceLabel && (
                         <div className="flex items-start gap-4 px-7 py-5">
                           <UsersThree
                             size={18}
                             weight="duotone"
-                            className="mt-1 shrink-0 text-primary"
+                            className="mt-1 shrink-0 text-gold"
                           />
                           <div>
-                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-muted uppercase">
+                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-white/45 uppercase">
                               Audience
                             </span>
-                            <div className="mt-1 text-[14.5px] font-medium text-ink">
+                            <div className="mt-1 text-[14.5px] font-medium text-white">
                               {audienceLabel}
                             </div>
                           </div>
@@ -574,13 +589,13 @@ export default function EventDetailPage() {
                           <CalendarBlank
                             size={18}
                             weight="duotone"
-                            className="mt-1 shrink-0 text-primary"
+                            className="mt-1 shrink-0 text-gold"
                           />
                           <div>
-                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-muted uppercase">
+                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-white/45 uppercase">
                               When
                             </span>
-                            <div className="mt-1 text-[14.5px] font-medium text-ink">
+                            <div className="mt-1 text-[14.5px] font-medium text-white">
                               {dates[0].date_start
                                 ? `${formatDateShort(dates[0].date_start)}${
                                     dates[0].date_end
@@ -598,13 +613,13 @@ export default function EventDetailPage() {
                           <MapPin
                             size={18}
                             weight="duotone"
-                            className="mt-1 shrink-0 text-primary"
+                            className="mt-1 shrink-0 text-gold"
                           />
                           <div>
-                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-muted uppercase">
+                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-white/45 uppercase">
                               Where
                             </span>
-                            <div className="mt-1 text-[14.5px] font-medium text-ink">
+                            <div className="mt-1 text-[14.5px] font-medium text-white">
                               {event.location}
                             </div>
                           </div>
@@ -616,13 +631,13 @@ export default function EventDetailPage() {
                           <CurrencyDollar
                             size={18}
                             weight="duotone"
-                            className="mt-1 shrink-0 text-primary"
+                            className="mt-1 shrink-0 text-gold"
                           />
                           <div>
-                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-muted uppercase">
+                            <span className="block text-[10.5px] font-medium tracking-[0.18em] text-white/45 uppercase">
                               Cost
                             </span>
-                            <div className="mt-1 text-[14.5px] font-medium text-ink">
+                            <div className="mt-1 text-[14.5px] font-medium text-white">
                               {event.cost}
                             </div>
                           </div>
@@ -634,16 +649,16 @@ export default function EventDetailPage() {
                       {hasRegister && (
                         <>
                           {(countdown || registerNotes.length > 0) && (
-                            <div className="space-y-1.5 rounded-xl border border-gold/50 bg-gold/10 px-4 py-3">
+                            <div className="space-y-1.5 rounded-xl border border-gold/30 bg-gold/10 px-4 py-3">
                               {countdown && (
                                 <div className="pb-1.5">
-                                  <p className="text-[10.5px] font-semibold tracking-[0.18em] text-muted uppercase">
+                                  <p className="text-[10.5px] font-semibold tracking-[0.18em] text-gold/85 uppercase">
                                     {countdown.label}
                                   </p>
-                                  <p className="font-heading text-[27px] leading-tight font-bold tabular-nums text-ink">
+                                  <p className="font-heading text-[27px] leading-tight font-bold tabular-nums text-white">
                                     {countdown.digits}
                                   </p>
-                                  <p className="text-[11.5px] text-muted">
+                                  <p className="text-[11.5px] text-white/55">
                                     {countdown.absolute}
                                   </p>
                                 </div>
@@ -651,12 +666,12 @@ export default function EventDetailPage() {
                               {registerNotes.map((note, i) => (
                                 <p
                                   key={i}
-                                  className="flex items-start gap-2 text-[12.5px] leading-snug font-medium text-ink-soft"
+                                  className="flex items-start gap-2 text-[12.5px] leading-snug font-medium text-white/75"
                                 >
                                   <Clock
                                     size={13}
                                     weight="duotone"
-                                    className="mt-0.5 shrink-0 text-gold-deep"
+                                    className="mt-0.5 shrink-0 text-gold"
                                   />
                                   {note}
                                 </p>
@@ -668,7 +683,7 @@ export default function EventDetailPage() {
                               {event.form_id ? (
                                 <Link
                                   to={`/events/${event.slug}/register`}
-                                  className="btn btn-primary w-full"
+                                  className="btn btn-gold w-full"
                                 >
                                   Register now{" "}
                                   <ArrowRight size={14} weight="bold" />
@@ -678,13 +693,13 @@ export default function EventDetailPage() {
                                   href={event.register_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="btn btn-primary w-full"
+                                  className="btn btn-gold w-full"
                                 >
                                   Register now{" "}
                                   <ArrowRight size={14} weight="bold" />
                                 </a>
                               )}
-                              <p className="text-center text-[13px] text-muted">
+                              <p className="text-center text-[13px] text-white/55">
                                 A few quick details and your place is saved.
                               </p>
                             </>
@@ -694,7 +709,7 @@ export default function EventDetailPage() {
 
                       {links.length > 0 && (
                         <div className="space-y-2">
-                          <p className="text-[10.5px] font-medium tracking-[0.18em] text-muted uppercase">
+                          <p className="text-[10.5px] font-medium tracking-[0.18em] text-white/45 uppercase">
                             Links
                           </p>
                           {links.map((link, i) => (
@@ -703,13 +718,13 @@ export default function EventDetailPage() {
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="group flex items-center justify-between gap-3 rounded-xl border border-line bg-bg px-4 py-3 text-[13.5px] font-medium text-ink-soft transition-all duration-300 hover:border-primary hover:text-primary"
+                              className="group flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-[13.5px] font-medium text-white/85 transition-all duration-300 hover:border-gold hover:text-gold"
                             >
                               <span className="flex min-w-0 items-center gap-2.5">
                                 <LinkIcon
                                   size={15}
                                   weight="duotone"
-                                  className="shrink-0 text-primary"
+                                  className="shrink-0 text-gold"
                                 />
                                 <span className="truncate">{link.label || link.url}</span>
                               </span>
@@ -736,14 +751,14 @@ export default function EventDetailPage() {
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-line px-2.5 py-3 text-[10.5px] font-semibold tracking-[0.06em] text-ink-soft uppercase transition-colors hover:border-primary hover:text-primary"
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-white/20 px-2.5 py-3 text-[10.5px] font-semibold tracking-[0.1em] text-white/75 uppercase transition-colors hover:border-gold hover:text-gold"
                         >
                           <CalendarBlank size={15} weight="duotone" />
                           Calendar
                         </a>
                         <button
                           onClick={handleShare}
-                          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-line px-2.5 py-3 text-[10.5px] font-semibold tracking-[0.06em] text-ink-soft uppercase transition-colors hover:border-primary hover:text-primary"
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-white/20 px-2.5 py-3 text-[10.5px] font-semibold tracking-[0.1em] text-white/75 uppercase transition-colors hover:border-gold hover:text-gold"
                         >
                           <ShareNetwork size={15} weight="duotone" />
                           Share
@@ -753,7 +768,7 @@ export default function EventDetailPage() {
                             href={directionsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-line px-2.5 py-3 text-[10.5px] font-semibold tracking-[0.06em] text-ink-soft uppercase transition-colors hover:border-primary hover:text-primary"
+                            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-white/20 px-2.5 py-3 text-[10.5px] font-semibold tracking-[0.1em] text-white/75 uppercase transition-colors hover:border-gold hover:text-gold"
                           >
                             <NavigationArrow size={15} weight="duotone" />
                             Directions
