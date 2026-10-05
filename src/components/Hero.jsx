@@ -107,8 +107,8 @@ export default function Hero() {
       </div>
 
       {/* Cinematic tint */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/80 via-primary-deep/45 to-primary-deep/95" />
-      <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/85 via-primary-deep/65 to-primary-deep/95" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/75 via-primary-deep/15 to-transparent" />
 
       <div className="container relative z-10 pt-36 pb-16 md:pb-20">
         <p
