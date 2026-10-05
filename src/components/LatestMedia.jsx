@@ -10,6 +10,7 @@ import {
 import { SOCIALS } from "../config";
 import { getLatestVideos } from "../lib/social";
 import Reveal from "./Reveal";
+import pattern from "../assets/background.png";
 
 const SOCIAL_CARDS = [
   { label: "Facebook Videos", icon: FacebookLogo, url: SOCIALS.facebook.videosUrl },
@@ -34,7 +35,7 @@ export default function LatestMedia() {
   }, []);
 
   return (
-    <section className="section" id="gallery">
+    <section className="section section-pattern" id="gallery">
       <div className="container">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <Reveal>
@@ -58,18 +59,25 @@ export default function LatestMedia() {
           </Reveal>
         </div>
 
-        {/* Videos */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Videos — swipeable carousel on mobile, grid from sm up */}
+        <div className="no-scrollbar -mx-6 flex snap-x snap-mandatory scroll-pl-6 gap-6 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-x-visible sm:scroll-pl-0 sm:px-0 lg:grid-cols-3">
           {loading
             ? Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="animate-pulse">
+                <div
+                  key={i}
+                  className="w-[78vw] shrink-0 animate-pulse sm:w-auto"
+                >
                   <div className="aspect-video rounded-xl bg-bg-slab" />
                   <div className="mt-4 h-4 w-3/4 rounded bg-bg-slab" />
                   <div className="mt-2 h-3 w-1/4 rounded bg-bg-slab" />
                 </div>
               ))
             : videos.map((item, i) => (
-                <Reveal key={item.id + i} delay={i * 80}>
+                <Reveal
+                  key={item.id + i}
+                  delay={i * 80}
+                  className="w-[78vw] shrink-0 snap-start sm:w-auto"
+                >
                   <a
                     href={item.href}
                     target="_blank"
@@ -132,22 +140,34 @@ export default function LatestMedia() {
 
         {/* Watch live band */}
         <Reveal delay={120}>
-          <div className="mt-10 flex flex-col items-center justify-between gap-5 rounded-2xl bg-primary-deep px-7 py-6 text-white sm:flex-row">
-            <span className="flex items-center gap-3.5 text-[15px]">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-gold">
-                <Broadcast size={20} weight="duotone" />
+          <div className="relative mt-10 overflow-hidden rounded-2xl bg-primary-deep text-white">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.07]"
+              style={{
+                backgroundImage: `url(${pattern})`,
+                backgroundSize: "420px auto",
+              }}
+            />
+            <div className="relative flex flex-col items-center justify-between gap-5 px-7 py-6 text-center sm:flex-row sm:text-left">
+              <span className="flex items-center gap-3.5 text-[15px]">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 text-gold">
+                  <Broadcast size={20} weight="duotone" />
+                </span>
+                <span>
+                  Follow us for <strong className="text-gold">live</strong>{" "}
+                  broadcasts and updates
+                </span>
               </span>
-              Follow us for <strong className="text-gold">live</strong>{" "}
-              broadcasts and updates
-            </span>
-            <a
-              href={SOCIALS.facebook.liveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-heading text-[13.5px] font-semibold text-primary-deep transition-all duration-300 hover:bg-gold"
-            >
-              <FacebookLogo size={16} weight="fill" /> Watch Live
-            </a>
+              <a
+                href={SOCIALS.facebook.liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-6 py-3 font-heading text-[13.5px] font-semibold text-primary-deep transition-all duration-300 hover:bg-gold"
+              >
+                <FacebookLogo size={16} weight="fill" /> Watch Live
+              </a>
+            </div>
           </div>
         </Reveal>
       </div>

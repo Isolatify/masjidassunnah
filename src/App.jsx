@@ -2,6 +2,7 @@ import { useLayoutEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Topbar from "./components/Topbar";
 import Footer from "./components/Footer";
+import CalligraphyBand from "./components/CalligraphyBand";
 import { scrollToTarget, resetScroll } from "./lib/lenis";
 import Home from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
@@ -73,6 +74,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
+      <CalligraphyBand />
       <Footer />
     </div>
   );

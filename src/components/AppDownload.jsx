@@ -52,7 +52,7 @@ function PlayStoreButton() {
 
 export default function AppDownload() {
   return (
-    <section className="section" id="app">
+    <section className="section section-pattern" id="app">
       <div className="container">
         <Reveal
           tilt

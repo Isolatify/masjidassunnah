@@ -242,8 +242,17 @@
     background-image: url("./assets/background.png");
     background-size: 560px auto;
     background-repeat: repeat;
-    opacity: 0.045;
+    opacity: 0.06;
     pointer-events: none;
+  }
+
+  /* ── Horizontal carousels: native swipe, no visible scrollbar ── */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   .section-head {
@@ -252,7 +261,7 @@
     text-align: center;
   }
 
-  /* ── Eyebrow label (MIA label-md: Inter 11/14, 0.14em) ── */
+  /* ── Eyebrow label (MIA label-md: Inter 11/14, 0.14em) — theme green ── */
   .eyebrow {
     display: inline-flex;
     align-items: center;
@@ -263,8 +272,14 @@
     line-height: 14px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-gold-deep);
+    color: var(--color-primary);
     margin-bottom: 14px;
+  }
+
+  /* On dark green panels the green label would disappear — fall back to gold. */
+  .bg-primary .eyebrow,
+  .bg-primary-deep .eyebrow {
+    color: var(--color-gold);
   }
 
   .eyebrow::before,

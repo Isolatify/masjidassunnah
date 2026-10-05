@@ -19,7 +19,7 @@ const MAPS_CARDS = [
 
 export default function Location() {
   return (
-    <section className="section" id="contact">
+    <section className="section section-pattern" id="contact">
       <div className="container">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <Reveal>

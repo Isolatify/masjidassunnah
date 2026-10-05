@@ -27,7 +27,7 @@ const AUDIENCES = [
 
 export default function About() {
   return (
-    <section className="section" id="about">
+    <section className="section section-pattern" id="about">
       <div className="container">
         <div className="mb-14 grid items-end gap-6 md:grid-cols-2">
           <Reveal>

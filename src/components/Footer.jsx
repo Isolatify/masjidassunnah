@@ -1,6 +1,4 @@
-import { useState } from "react";
 import {
-  ArrowRight,
   EnvelopeSimple,
   MapPin,
   Phone,
@@ -11,7 +9,6 @@ import {
 import { Link } from "react-router-dom";
 import { SITE, SOCIALS } from "../config";
 import { useSettings } from "../lib/siteSettings";
-import { supabase } from "../lib/supabase";
 import logoWhite from "../assets/logo-white.png";
 import pattern from "../assets/background.png";
 
@@ -69,102 +66,6 @@ function ColHeading({ children }) {
   );
 }
 
-function NewsletterBand({ contactEmail }) {
-  const [value, setValue] = useState("");
-  const [status, setStatus] = useState(null); // "busy" | "ok" | "error"
-
-  async function onSubmit(e) {
-    e.preventDefault();
-    const email = value.trim();
-    if (!email) return;
-    setStatus("busy");
-    try {
-      const { error } = await supabase
-        .from("newsletter_subscribers")
-        .insert({ email });
-      if (error) throw error;
-      setStatus("ok");
-      setValue("");
-    } catch {
-      setStatus("error");
-    }
-  }
-
-  const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(
-    "Newsletter signup",
-  )}&body=${encodeURIComponent(
-    `Please add ${value.trim() || "me"} to the weekly newsletter.`,
-  )}`;
-
-  return (
-    <div className="relative border-b border-white/10">
-      <div className="container grid gap-8 py-14 md:grid-cols-2 md:items-end md:py-16">
-        <div>
-          <p className="text-[11px] font-medium tracking-[0.28em] text-gold uppercase">
-            Stay close to the masjid
-          </p>
-          <p className="mt-4 max-w-md font-display text-[clamp(24px,3vw,34px)] leading-[1.3] font-semibold text-white">
-            A quiet weekly note — classes, events, reflections.
-          </p>
-        </div>
-        <form
-          onSubmit={onSubmit}
-          className="md:max-w-md md:justify-self-end"
-        >
-          <div className="flex items-center gap-4 border-b border-white/25 pb-3 transition-colors focus-within:border-gold">
-            <input
-              type="email"
-              required
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value);
-                setStatus(null);
-              }}
-              placeholder="your@email.com"
-              aria-label="Email address"
-              className="w-full min-w-0 bg-transparent text-[15px] text-white outline-none placeholder-white/40"
-            />
-            <button
-              type="submit"
-              disabled={status === "busy"}
-              className="group inline-flex shrink-0 items-center gap-2 text-[11px] font-medium tracking-[0.18em] text-gold uppercase transition-colors hover:text-white disabled:opacity-50"
-            >
-              Subscribe
-              <ArrowRight
-                size={13}
-                weight="bold"
-                className="transition-transform duration-300 group-hover:translate-x-0.5"
-              />
-            </button>
-          </div>
-          <p className="mt-3 text-[12px] leading-relaxed text-white/45">
-            {status === "ok" && (
-              <span className="text-gold/90">
-                You&apos;re on the list — see you in your inbox.
-              </span>
-            )}
-            {status === "error" && (
-              <>
-                Couldn&apos;t subscribe automatically —{" "}
-                <a
-                  href={mailto}
-                  className="underline transition-colors hover:text-gold"
-                >
-                  email us and we&apos;ll add you
-                </a>
-                .
-              </>
-            )}
-            {status !== "ok" &&
-              status !== "error" &&
-              "We won't share your address. Unsubscribe any time."}
-          </p>
-        </form>
-      </div>
-    </div>
-  );
-}
-
 export default function Footer() {
   const { settings, email, emailHref, phone, phoneHref, address, socialItems } = useSiteInfo();
   const siteName = settings.site?.name || SITE.name;
@@ -178,8 +79,6 @@ export default function Footer() {
           backgroundSize: "560px auto",
         }}
       />
-
-      <NewsletterBand contactEmail={email} />
 
       <div className="container relative pt-20 pb-10 md:pt-24">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">

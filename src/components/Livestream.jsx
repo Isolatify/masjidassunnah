@@ -19,7 +19,7 @@ export default function Livestream() {
   }, []);
 
   return (
-    <section className="section bg-bg-slab" id="live">
+    <section className="section section-pattern bg-bg-slab" id="live">
       <div className="container">
         <Reveal className="overflow-hidden rounded-3xl border border-line-soft bg-surface shadow-sm lg:grid lg:grid-cols-[1fr_1.15fr]">
           {/* Copy */}

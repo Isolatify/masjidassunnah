@@ -1,11 +1,32 @@
+import { useEffect, useRef, useState } from "react";
 import Reveal from "./Reveal";
 import { SOCIALS } from "../config";
 
 export default function SocialFeed() {
   const pageUrl = "https://www.facebook.com/masjidassunnahlakemba";
+  const wrapRef = useRef(null);
+  // The FB page plugin only scales down when the width param matches the
+  // container — a fixed 500px inside a ~350px phone card clips the feed.
+  const [fbWidth, setFbWidth] = useState(500);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = Math.max(280, Math.min(500, Math.round(el.clientWidth)));
+      setFbWidth((prev) => (prev === w ? prev : w));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   return (
-    <section className="section bg-bg-slab" id="social-feed">
+    <section
+      className="section section-pattern bg-primary-mist"
+      id="social-feed"
+    >
       <div className="container">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <Reveal>
@@ -20,11 +41,15 @@ export default function SocialFeed() {
         </div>
 
         <Reveal className="mx-auto max-w-[512px]">
-          <div className="overflow-hidden rounded-2xl border border-line-soft bg-surface">
+          <div
+            ref={wrapRef}
+            className="overflow-hidden rounded-2xl border border-line-soft bg-surface"
+          >
             <iframe
+              key={fbWidth}
               src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(
                 pageUrl
-              )}&tabs=timeline&width=500&height=620&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&lazy=false`}
+              )}&tabs=timeline&width=${fbWidth}&height=620&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&lazy=false`}
               title="Masjid As Sunnah Facebook Feed"
               className="h-[620px] w-full border-0"
               loading="lazy"

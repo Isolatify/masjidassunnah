@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   CalendarX,
   CalendarBlank,
   MapPin,
   ArrowRight,
+  CaretLeft,
+  CaretRight,
 } from "@phosphor-icons/react";
 import Reveal from "./Reveal";
 import { supabase } from "../lib/supabase";
@@ -63,9 +65,40 @@ function nextDate(ev) {
 export default function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+  const trackRef = useRef(null);
   const settings = useSettings();
   const homeMax = Number(settings.events?.homeMax) || DEFAULT_MAX_EVENTS;
   const upcomingOnly = settings.events?.upcomingOnly !== false;
+
+  function scrollByCard(dir) {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.firstElementChild;
+    const step = card
+      ? card.getBoundingClientRect().width + 24
+      : el.clientWidth * 0.8;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  }
+
+  // Arrows reflect the track position (disabled at either end).
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return undefined;
+    const update = () => {
+      setCanPrev(el.scrollLeft > 4);
+      setCanNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
+  }, [loading, events.length]);
 
   useEffect(() => {
     supabase
@@ -109,14 +142,34 @@ export default function Events() {
   }
 
   return (
-    <section className="section bg-bg-slab" id="events">
+    <section className="section section-pattern bg-bg-slab" id="events">
       <div className="container">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
           <Reveal>
             <span className="eyebrow">Events</span>
             <h2 className="section-title">Upcoming Events</h2>
           </Reveal>
-          <Reveal delay={100}>
+          <Reveal delay={100} className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => scrollByCard(-1)}
+                disabled={!canPrev}
+                aria-label="Previous events"
+                className="grid h-11 w-11 place-items-center rounded-full border border-line bg-surface text-ink transition-all duration-300 hover:border-primary hover:bg-primary hover:text-white disabled:pointer-events-none disabled:opacity-35 disabled:hover:border-line disabled:hover:bg-surface disabled:hover:text-ink"
+              >
+                <CaretLeft size={16} weight="bold" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCard(1)}
+                disabled={!canNext}
+                aria-label="Next events"
+                className="grid h-11 w-11 place-items-center rounded-full border border-line bg-surface text-ink transition-all duration-300 hover:border-primary hover:bg-primary hover:text-white disabled:pointer-events-none disabled:opacity-35 disabled:hover:border-line disabled:hover:bg-surface disabled:hover:text-ink"
+              >
+                <CaretRight size={16} weight="bold" />
+              </button>
+            </div>
             <Link
               to="/events"
               className="group inline-flex items-center gap-2 rounded-full border border-line bg-surface px-6 py-3.5 font-heading text-[13.5px] font-medium text-ink transition-all duration-300 hover:border-primary hover:text-primary"
@@ -132,11 +185,11 @@ export default function Events() {
         </div>
 
         {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="no-scrollbar -mx-6 flex gap-6 overflow-x-auto px-6 pb-2 sm:mx-0 sm:px-0">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="animate-pulse overflow-hidden rounded-2xl border border-line-soft bg-surface"
+                className="w-[80vw] shrink-0 animate-pulse overflow-hidden rounded-2xl border border-line-soft bg-surface sm:w-[calc(50%-12px)] lg:w-[calc((100%-48px)/3)]"
               >
                 <div className="h-48 bg-bg-slab" />
                 <div className="space-y-3 p-6">
@@ -164,13 +217,17 @@ export default function Events() {
             </p>
           </Reveal>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            ref={trackRef}
+            className="no-scrollbar -mx-6 flex snap-x snap-mandatory scroll-pl-6 gap-6 overflow-x-auto px-6 pb-2 sm:mx-0 sm:scroll-pl-0 sm:px-0"
+          >
             {events.map((ev, i) => (
               <Reveal
                 key={ev.id}
                 delay={i * 100}
                 tilt
-                className="group flex flex-col overflow-hidden rounded-2xl border border-line-soft bg-surface hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
+                data-card
+                className="group flex w-[80vw] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-line-soft bg-surface hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg sm:w-[calc(50%-12px)] lg:w-[calc((100%-48px)/3)]"
               >
                 <div className="relative h-48 overflow-hidden bg-bg-slab">
                   {(ev.cover_image || ev.image_url) && (
