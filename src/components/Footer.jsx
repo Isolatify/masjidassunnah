@@ -49,7 +49,7 @@ const PAGE_LINKS = [
   { label: "Prayer Times", to: "/prayer" },
   { label: "Weekly Timetable", to: "/timetable" },
   { label: "Events", to: "/events" },
-  { label: "Contact Us", to: "/contact" },
+  { label: "Contact", to: "/contact" },
   { label: "Donate", to: "/donate" },
 ];
 

@@ -15,6 +15,7 @@ import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import Tilt3D from "../components/Tilt3D";
 import useJumuah from "../lib/useJumuah";
+import pattern from "../assets/background.png";
 
 const CARDS = [
   {
@@ -111,14 +112,14 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        eyebrow="Contact Us"
+        eyebrow="Contact"
         title="Get In Touch"
         sub="Questions, feedback or a warm welcome — reach out to the Masjid As Sunnah team."
       />
 
       <main id="page">
         {/* ── Contact channels ── */}
-        <section className="section pb-0">
+        <section className="section section-pattern pb-0">
           <div className="container">
             <div className="mb-12 grid items-end gap-6 md:grid-cols-2">
               <Reveal>
@@ -169,7 +170,7 @@ export default function ContactPage() {
         </section>
 
         {/* ── Message form + info ── */}
-        <section className="section">
+        <section className="section section-pattern bg-primary-mist">
           <div className="container">
             <div className="grid gap-6 lg:grid-cols-12">
               <Reveal className="lg:col-span-7">
@@ -370,8 +371,16 @@ export default function ContactPage() {
         </section>
 
         {/* ── Socials ── */}
-        <section className="bg-primary-deep py-14">
-          <div className="container flex flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
+        <section className="relative overflow-hidden bg-primary-deep py-14">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.05]"
+            style={{
+              backgroundImage: `url(${pattern})`,
+              backgroundSize: "560px auto",
+            }}
+          />
+          <div className="container relative flex flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
             <Reveal>
               <p className="font-heading text-[17px] font-medium text-white">
                 Follow the masjid for daily updates, events and live broadcasts

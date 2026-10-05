@@ -66,7 +66,7 @@ export const NAV = [
       { label: "Instagram", url: SOCIALS.instagram.url },
     ],
   },
-  { label: "Contact Us", href: "/contact", route: "/contact" },
+  { label: "Contact", href: "/contact", route: "/contact" },
   { label: "Donate", href: "/donate", route: "/donate", cta: true },
 ];
 
