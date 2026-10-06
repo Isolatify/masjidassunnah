@@ -20,13 +20,13 @@ import bandPhoto from "../assets/photos/exterior.jpg";
 import heroPhoto from "../assets/photos/about-hero.jpg";
 
 const STORY = [
-  "Masjid As Sunnah is operated by the Sunnah Foundation, an organisation at the heart of Australia's Muslim community for over three decades. Our centre is dedicated to the worship of Allah, upon the Qur'an and the authentic Sunnah of Prophet Muhammad ﷺ — understood the way of the righteous predecessors.",
+  "Masjid As Sunnah is operated by the Sunnah Foundation, an organisation that has been serving Australia's Muslim community for more than twenty years. Our centre is dedicated to the worship of Allah, upon the Qur'an and the authentic Sunnah of Prophet Muhammad ﷺ — understood the way of the righteous predecessors.",
   "Our masjid is housed in the Haldon Street Waqf Building — the first-ever Waqf community building in Australia, established through the generous Parents' Waqf and brought to life by Awqaf Australia. From this historic home we serve worshippers, students and families from Lakemba, Sydney and beyond.",
-  "Founded by a dedicated group of families, Masjid As Sunnah has grown from a small community musallah into one of Sydney's most recognised Islamic centres. Our mission is to spread authentic Islamic knowledge, nurture strong Islamic character and build a united community founded upon sincerity, compassion and adherence to the teachings of Islam.",
+  "Founded by a dedicated group of families, Masjid As Sunnah has grown from a small community musallah into a bustling centre of worship and learning — with a simple aim: to spread authentic Islamic knowledge, nurture sincere character, and keep the community united upon the teachings of Islam.",
 ];
 
 const STATS = [
-  { num: "30+", label: "Years serving the community" },
+  { num: "20+", label: "Years serving the community" },
   { num: "25+", label: "Years guiding Hajj & Umrah" },
   { num: "1st", label: "Waqf building in Australia" },
   { num: "1000s", label: "Of worshippers welcomed" },
@@ -36,17 +36,17 @@ const BEARINGS = [
   {
     icon: BookOpen,
     title: "Knowledge",
-    text: "A commitment to authentic Islamic learning — Qur'an, Sunnah and the way of the Salaf — delivered with clarity and sincerity.",
+    text: "Authentic Islamic learning taught with clarity and sincerity — Qur'an, Sunnah and the guidance of the Salaf.",
   },
   {
     icon: UsersThree,
     title: "Community",
-    text: "A united family of believers — brothers and sisters, young and old — bound by faith, compassion and a shared purpose.",
+    text: "Brothers and sisters, young and old, united by faith and bound by a shared purpose in the house of Allah.",
   },
   {
     icon: HandHeart,
     title: "Service",
-    text: "Caring for the community through worship, guidance, charity, counselling and life-event support — from cradle to grave.",
+    text: "Caring for our community beyond the prayer hall — charity, counselling, marriage support and guidance through every stage of life.",
   },
 ];
 
@@ -73,7 +73,7 @@ const MILESTONES = [
     icon: AirplaneInFlight,
     tag: "Over 25 Years",
     title: "Guiding Pilgrims to Hajj & Umrah",
-    text: "Sunnah Foundation has guided thousands of pilgrims to the sacred lands for over 25 years, providing trusted scholars and comprehensive spiritual preparation for the journey of a lifetime.",
+    text: "For over 25 years Sunnah Foundation has guided pilgrims to the sacred lands — trusted scholars beside you from the first class to the last farewell.",
   },
 ];
 
@@ -131,8 +131,8 @@ export default function AboutPage() {
       <PageHero
         bg={heroPhoto}
         eyebrow="About Us"
-        title="A house of knowledge, a body of teachers."
-        sub="Three decades of worship, knowledge and community in the heart of Sydney — upon the Qur'an and the authentic Sunnah."
+        title="Rooted in the Sunnah, built by the community."
+        sub="Over twenty years of prayer, knowledge and community life in the heart of Sydney — upon the Qur'an and the authentic Sunnah."
       />
 
       <main id="page">
@@ -144,7 +144,7 @@ export default function AboutPage() {
                 <Reveal>
                   <span className="eyebrow">Our Story</span>
                   <h2 className="section-title">
-                    Serving The Ummah For Three Decades
+                    Serving Our Community For Over 20 Years
                   </h2>
                 </Reveal>
 
@@ -212,7 +212,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── The Centre's Bearings ── */}
-        <section className="relative isolate overflow-hidden bg-primary-deep py-[var(--section-space)]">
+        <section className="section relative isolate overflow-hidden bg-primary-deep">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0"
@@ -226,7 +226,7 @@ export default function AboutPage() {
               <Reveal>
                 <DarkEyebrow>The Centre's Bearings</DarkEyebrow>
                 <h2 className="font-display text-[clamp(32px,4.5vw,52px)] leading-[1.06] font-bold tracking-[-0.02em] text-white">
-                  What guides everything we do.
+                  The principles we return to with every decision.
                 </h2>
               </Reveal>
             </div>
@@ -328,9 +328,9 @@ export default function AboutPage() {
               </Reveal>
               <Reveal delay={100}>
                 <p className="section-sub md:pb-2 md:text-right">
-                  From daily prayers to educational programs and community
-                  support — we serve the spiritual, educational and social needs
-                  of the Muslim community.
+                  Everything from the five daily prayers to Qur'an classes,
+                  Hajj guidance and family support — serving the spiritual,
+                  educational and social life of our community.
                 </p>
               </Reveal>
             </div>

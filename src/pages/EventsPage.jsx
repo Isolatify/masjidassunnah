@@ -36,7 +36,15 @@ const DOT = {
   Brothers: "bg-primary",
   Sisters: "bg-pink-500",
   Youth: "bg-blue-500",
-  Children: "bg-red-500",
+  Children: "bg-purple-500",
+};
+
+/* Same colour code as the badges: green / pink / blue / purple. */
+const BADGE_TONE = {
+  Brothers: "bg-primary text-white",
+  Sisters: "bg-pink-500 text-white",
+  Youth: "bg-blue-500 text-white",
+  Children: "bg-purple-500 text-white",
 };
 
 function pad(n) {
@@ -72,9 +80,15 @@ function getDisplayDate(ev) {
 
 function getBadge(audience) {
   const a = audience || [];
-  if (a.includes("All") || a.length === 0) return "Open to all";
-  if (a.length === 1) return `${a[0]} only`;
-  return a.join(" & ");
+  const neutral = "bg-primary-deep/85 text-white backdrop-blur-sm";
+  if (a.includes("All") || a.length === 0)
+    return { label: "Open to all", cls: neutral };
+  if (a.length === 1)
+    return {
+      label: `${a[0]} only`,
+      cls: BADGE_TONE[a[0]] || neutral,
+    };
+  return { label: a.join(" & "), cls: neutral };
 }
 
 function dotFor(audience) {
@@ -626,12 +640,14 @@ export default function EventsPage() {
                 </Reveal>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {visible.map((ev, i) => (
+                  {visible.map((ev, i) => {
+                    const badge = getBadge(ev.audience);
+                    return (
                     <Reveal
                       key={ev.id}
                       delay={(i % 3) * 90}
                       tilt
-                      className="group flex flex-col overflow-hidden rounded-2xl border border-line-soft bg-surface hover:-translate-y-1.5 hover:shadow-lg"
+                      className="group relative flex flex-col overflow-hidden rounded-2xl keep-radius border border-line-soft bg-surface hover:-translate-y-1.5 hover:shadow-lg"
                     >
                       <div className="relative h-52 overflow-hidden bg-bg-slab">
                         {(ev.full_image || ev.cover_image || ev.image_url) && (
@@ -644,8 +660,10 @@ export default function EventsPage() {
                             loading="lazy"
                           />
                         )}
-                        <span className="absolute top-4 left-4 rounded-full bg-primary-deep/85 px-3.5 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-white uppercase backdrop-blur-sm">
-                          {getBadge(ev.audience)}
+                        <span
+                          className={`absolute top-4 left-4 rounded-full px-3.5 py-1.5 text-[10px] font-semibold tracking-[0.16em] uppercase ${badge.cls}`}
+                        >
+                          {badge.label}
                         </span>
                         {ev.__past && (
                           <span className="absolute top-4 right-4 rounded-full bg-gold px-3.5 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-primary-deep uppercase">
@@ -696,7 +714,7 @@ export default function EventsPage() {
                         <div className="mt-auto flex flex-wrap items-center gap-2.5 pt-6">
                           <Link
                             to={`/events/${ev.slug}`}
-                            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary-deep px-4 py-3 font-heading text-[13px] font-medium text-white transition-all duration-300 group-hover:bg-primary"
+                            className="relative z-10 flex flex-1 items-center justify-center gap-2 rounded-full bg-primary-deep px-4 py-3 font-heading text-[13px] font-medium text-white transition-all duration-300 group-hover:bg-primary"
                           >
                             {ev.__past ? "View recap" : "View Details"}
                             <ArrowRight size={13} weight="bold" />
@@ -705,7 +723,7 @@ export default function EventsPage() {
                             (ev.form_id ? (
                               <Link
                                 to={`/events/${ev.slug}/register`}
-                                className="flex flex-1 items-center justify-center gap-2 rounded-full border border-primary/50 px-4 py-3 font-heading text-[13px] font-medium text-primary transition-all duration-300 hover:bg-primary hover:text-white"
+                                className="relative z-10 flex flex-1 items-center justify-center gap-2 rounded-full border border-primary/50 px-4 py-3 font-heading text-[13px] font-medium text-primary transition-all duration-300 hover:bg-primary hover:text-white"
                               >
                                 Register
                               </Link>
@@ -714,15 +732,23 @@ export default function EventsPage() {
                                 href={ev.register_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex flex-1 items-center justify-center gap-2 rounded-full border border-primary/50 px-4 py-3 font-heading text-[13px] font-medium text-primary transition-all duration-300 hover:bg-primary hover:text-white"
+                                className="relative z-10 flex flex-1 items-center justify-center gap-2 rounded-full border border-primary/50 px-4 py-3 font-heading text-[13px] font-medium text-primary transition-all duration-300 hover:bg-primary hover:text-white"
                               >
                                 Register
                               </a>
                             ))}
                         </div>
                       </div>
+
+                      {/* Whole card is tappable — the buttons above stay visible. */}
+                      <Link
+                        to={`/events/${ev.slug}`}
+                        className="absolute inset-0 z-0"
+                        aria-label={`View ${ev.title}`}
+                      />
                     </Reveal>
-                  ))}
+                    );
+                  })}
                 </div>
               ))}
 

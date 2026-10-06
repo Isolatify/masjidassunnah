@@ -79,7 +79,12 @@ export default function Topbar() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 28);
+    // Solid only after scrolling PAST the header (76px) — with a small
+  // hysteresis band so the transition never flickers around the threshold.
+  const onScroll = () => {
+    const y = window.scrollY;
+    setScrolled((prev) => (prev ? y > 64 : y > 84));
+  };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

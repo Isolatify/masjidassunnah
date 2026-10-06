@@ -19,7 +19,7 @@ const ADMIN_URL = (import.meta.env.VITE_ADMIN_URL || "").replace(/\/$/, "");
 const AMOUNTS = [25, 50, 100, 250];
 
 const STATS = [
-  { num: "30+", label: "Years" },
+  { num: "20+", label: "Years" },
   { num: "1000s", label: "Worshippers" },
   { num: "7", label: "Days a week" },
 ];
@@ -146,7 +146,7 @@ export default function DonatePage() {
                   <p className="mt-5 text-[15.5px] leading-[1.75] text-ink-soft">
                     Sadaqah Jariyah that continues to benefit long after you've
                     given — a house of Allah that stands for the next generation
-                    as it has for the last three decades.
+                    as it has for more than twenty years.
                   </p>
                 </Reveal>
 

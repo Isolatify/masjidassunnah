@@ -110,6 +110,12 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/85 via-primary-deep/65 to-primary-deep/95" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/75 via-primary-deep/15 to-transparent" />
 
+      {/* Islamic lattice over the tint */}
+      <span
+        aria-hidden
+        className="pattern-overlay pattern-overlay--gold pointer-events-none absolute inset-0"
+      />
+
       <div className="container relative z-10 pt-36 pb-16 md:pb-20">
         <p
           className="rise font-body text-[11px] font-medium tracking-[0.32em] text-gold uppercase md:text-xs"
@@ -131,7 +137,8 @@ export default function Hero() {
           className="rise mt-6 max-w-xl text-[16px] leading-relaxed text-white/75 md:text-[18px]"
           style={{ animationDelay: "0.45s" }}
         >
-          A place of worship, knowledge and community — upon the Qur'an and the
+          Five daily prayers, Jumu'ah khutbah, Qur'an classes and community
+          programmes — in the heart of Lakemba, upon the Qur'an and the
           authentic Sunnah of the Prophet Muhammad ﷺ.
         </p>
 
@@ -156,7 +163,7 @@ export default function Hero() {
 
         {/* Facts strip */}
         <div
-          className="rise mt-12 grid gap-px overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md sm:grid-cols-3"
+          className="rise mt-12 grid gap-px overflow-hidden rounded-2xl keep-radius border border-white/15 bg-white/10 backdrop-blur-md sm:grid-cols-3"
           style={{ animationDelay: "0.75s" }}
         >
           {facts.map((f) => {

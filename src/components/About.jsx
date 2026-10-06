@@ -2,42 +2,53 @@ import { Users, User, UsersThree, Baby, ArrowRight } from "@phosphor-icons/react
 import { Link } from "react-router-dom";
 import Reveal from "./Reveal";
 
+/* Colour-coded audiences: Brothers = green, Sisters = pink,
+   Youth = blue, Children = purple. */
 const AUDIENCES = [
   {
     icon: Users,
     title: "Brothers",
     text: "Dedicated spaces and programs for the brothers.",
+    tone: "bg-primary-mist text-primary group-hover:bg-primary group-hover:text-white",
+    link: "text-primary",
   },
   {
     icon: User,
     title: "Sisters",
     text: "A welcoming space managed by the Sisters Team.",
+    tone: "bg-pink-500/10 text-pink-500 group-hover:bg-pink-500 group-hover:text-white",
+    link: "text-pink-500",
   },
   {
     icon: UsersThree,
     title: "Youth",
     text: "Islamic programs and activities for ages 10+.",
+    tone: "bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white",
+    link: "text-blue-500",
   },
   {
     icon: Baby,
     title: "Children",
     text: "Nurturing young hearts with Islamic values.",
+    tone: "bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white",
+    link: "text-purple-500",
   },
 ];
 
 export default function About() {
   return (
-    <section className="section section-pattern" id="about">
+    <section className="section" id="about">
       <div className="container">
         <div className="mb-14 grid items-end gap-6 md:grid-cols-2">
           <Reveal>
             <span className="eyebrow">Find Your Place</span>
-            <h2 className="section-title">What are you looking&nbsp;for?</h2>
+            <h2 className="section-title">Who is it&nbsp;for?</h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="section-sub md:pb-2 md:text-right">
-              Wherever you are, there's a place for you here. Choose a path to
-              see what's on.
+              Brothers, sisters, youth and children — each with their own
+              space, programmes and teachers. Pick your path to see what's
+              on.
             </p>
           </Reveal>
         </div>
@@ -48,9 +59,11 @@ export default function About() {
               key={a.title}
               delay={i * 100}
               tilt
-              className="group rounded-2xl border border-line-soft bg-surface p-7 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
+              className="group relative rounded-2xl border border-line-soft bg-surface p-7 hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg"
             >
-              <span className="grid h-14 w-14 place-items-center rounded-full bg-primary-mist text-primary transition-colors duration-500 group-hover:bg-primary group-hover:text-white">
+              <span
+                className={`grid h-14 w-14 place-items-center rounded-full transition-colors duration-500 ${a.tone}`}
+              >
                 <a.icon size={26} weight="duotone" />
               </span>
               <h3 className="mt-6 font-heading text-xl font-semibold">
@@ -59,12 +72,18 @@ export default function About() {
               <p className="mt-2 text-[14.5px] leading-relaxed text-muted">
                 {a.text}
               </p>
-              <Link
-                to={`/events?audience=${encodeURIComponent(a.title)}`}
-                className="mt-4 inline-flex items-center gap-1.5 py-2 text-[13px] font-medium text-primary transition-all duration-300 md:opacity-0 md:group-hover:opacity-100"
+              <span
+                className={`mt-4 inline-flex items-center gap-1.5 py-2 text-[13px] font-medium ${a.link} md:opacity-0 md:group-hover:opacity-100`}
               >
                 See programs <ArrowRight size={13} weight="bold" />
-              </Link>
+              </span>
+
+              {/* Whole card is tappable — the button above stays visible. */}
+              <Link
+                to={`/events?audience=${encodeURIComponent(a.title)}`}
+                className="absolute inset-0 z-10"
+                aria-label={`See programs for ${a.title}`}
+              />
             </Reveal>
           ))}
         </div>

@@ -6,7 +6,6 @@ import {
 } from "@phosphor-icons/react";
 import { SOCIALS } from "../config";
 import Reveal from "./Reveal";
-import patternData from "../assets/background.png";
 
 const ITEMS = [
   { ...SOCIALS.youtube, icon: YoutubeLogo },
@@ -17,15 +16,6 @@ const ITEMS = [
 export default function Socials() {
   return (
     <section className="section relative overflow-hidden bg-primary" id="socials">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage: `url(${patternData})`,
-          backgroundSize: "560px auto",
-        }}
-      />
-
       <div className="container relative">
         <Reveal className="section-head">
           <span className="eyebrow">Follow Us</span>

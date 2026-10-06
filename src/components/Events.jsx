@@ -14,6 +14,28 @@ import { useSettings } from "../lib/siteSettings";
 
 const DEFAULT_MAX_EVENTS = 7;
 
+/* Colour-coded audiences: Brothers = green, Sisters = pink,
+   Youth = blue, Children = purple. */
+const AUDIENCE_TONE = {
+  Brothers: "bg-primary text-white",
+  Sisters: "bg-pink-500 text-white",
+  Youth: "bg-blue-500 text-white",
+  Children: "bg-purple-500 text-white",
+};
+
+function getBadge(audience) {
+  const a = audience || [];
+  const neutral = "bg-primary-deep/85 text-white backdrop-blur-sm";
+  if (a.includes("All") || a.length === 0)
+    return { label: "OPEN TO ALL", cls: neutral };
+  if (a.length === 1)
+    return {
+      label: a[0].toUpperCase(),
+      cls: AUDIENCE_TONE[a[0]] || neutral,
+    };
+  return { label: a.join(", ").toUpperCase(), cls: neutral };
+}
+
 /* An event counts as upcoming if any of its dates are today or later. */
 function isUpcoming(ev) {
   const today = new Date();
@@ -67,6 +89,7 @@ export default function Events() {
   const [loading, setLoading] = useState(true);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
+  const [active, setActive] = useState(0);
   const trackRef = useRef(null);
   const settings = useSettings();
   const homeMax = Number(settings.events?.homeMax) || DEFAULT_MAX_EVENTS;
@@ -82,13 +105,25 @@ export default function Events() {
     el.scrollBy({ left: dir * step, behavior: "smooth" });
   }
 
-  // Arrows reflect the track position (disabled at either end).
+  function goTo(i) {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.children[i];
+    if (!card) return;
+    const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0;
+    el.scrollTo({ left: card.offsetLeft - pad, behavior: "smooth" });
+  }
+
+  // Arrows + dots reflect the track position (disabled at either end).
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return undefined;
     const update = () => {
       setCanPrev(el.scrollLeft > 4);
       setCanNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+      const card = el.firstElementChild;
+      const step = card ? card.getBoundingClientRect().width + 24 : 0;
+      setActive(step > 0 ? Math.round(el.scrollLeft / step) : 0);
     };
     update();
     el.addEventListener("scroll", update, { passive: true });
@@ -134,42 +169,15 @@ export default function Events() {
     return formatDate(ev.date_start);
   }
 
-  function getBadge(audience) {
-    const a = audience || [];
-    if (a.includes("All") || a.length === 0) return "OPEN TO ALL";
-    if (a.length === 1) return a[0].toUpperCase();
-    return a.join(", ").toUpperCase();
-  }
-
   return (
-    <section className="section section-pattern bg-bg-slab" id="events">
+    <section className="section" id="events">
       <div className="container">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
           <Reveal>
             <span className="eyebrow">Events</span>
             <h2 className="section-title">Upcoming Events</h2>
           </Reveal>
-          <Reveal delay={100} className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => scrollByCard(-1)}
-                disabled={!canPrev}
-                aria-label="Previous events"
-                className="grid h-11 w-11 place-items-center rounded-full border border-line bg-surface text-ink transition-all duration-300 hover:border-primary hover:bg-primary hover:text-white disabled:pointer-events-none disabled:opacity-35 disabled:hover:border-line disabled:hover:bg-surface disabled:hover:text-ink"
-              >
-                <CaretLeft size={16} weight="bold" />
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollByCard(1)}
-                disabled={!canNext}
-                aria-label="Next events"
-                className="grid h-11 w-11 place-items-center rounded-full border border-line bg-surface text-ink transition-all duration-300 hover:border-primary hover:bg-primary hover:text-white disabled:pointer-events-none disabled:opacity-35 disabled:hover:border-line disabled:hover:bg-surface disabled:hover:text-ink"
-              >
-                <CaretRight size={16} weight="bold" />
-              </button>
-            </div>
+          <Reveal delay={100}>
             <Link
               to="/events"
               className="group inline-flex items-center gap-2 rounded-full border border-line bg-surface px-6 py-3.5 font-heading text-[13.5px] font-medium text-ink transition-all duration-300 hover:border-primary hover:text-primary"
@@ -185,7 +193,7 @@ export default function Events() {
         </div>
 
         {loading ? (
-          <div className="no-scrollbar -mx-6 flex gap-6 overflow-x-auto px-6 pb-2 sm:mx-0 sm:px-0">
+          <div className="no-scrollbar mx-[calc(var(--gutter)*-1)] flex gap-6 overflow-x-auto px-[var(--gutter)] pb-2 sm:mx-0 sm:px-0">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
@@ -217,70 +225,123 @@ export default function Events() {
             </p>
           </Reveal>
         ) : (
-          <div
-            ref={trackRef}
-            className="no-scrollbar -mx-6 flex snap-x snap-mandatory scroll-pl-6 gap-6 overflow-x-auto px-6 pb-2 sm:mx-0 sm:scroll-pl-0 sm:px-0"
-          >
-            {events.map((ev, i) => (
-              <Reveal
-                key={ev.id}
-                delay={i * 100}
-                tilt
-                data-card
-                className="group flex w-[80vw] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-line-soft bg-surface hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg sm:w-[calc(50%-12px)] lg:w-[calc((100%-48px)/3)]"
-              >
-                <div className="relative h-48 overflow-hidden bg-bg-slab">
-                  {(ev.cover_image || ev.image_url) && (
-                    <img
-                      src={ev.cover_image || ev.image_url}
-                      alt={ev.title}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  )}
-                  <span className="absolute top-4 left-4 rounded-full bg-primary-deep/85 px-3.5 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-white uppercase backdrop-blur-sm">
-                    {getBadge(ev.audience)}
-                  </span>
-                </div>
-
-                <div className="flex flex-1 flex-col p-6">
-                  <h3 className="font-heading text-xl leading-snug font-semibold text-ink">
-                    {ev.title}
-                  </h3>
-                  {ev.description && (
-                    <p className="mt-2.5 line-clamp-2 text-[14.5px] leading-relaxed text-muted">
-                      {ev.description}
-                    </p>
-                  )}
-                  <div className="mt-4 flex flex-col gap-1.5 text-[13.5px] text-ink-soft">
-                    <span className="flex items-center gap-2">
-                      <CalendarBlank
-                        size={14}
-                        weight="duotone"
-                        className="text-gold-deep"
+          <div className="relative">
+            <div
+              ref={trackRef}
+              className="no-scrollbar mx-[calc(var(--gutter)*-1)] flex snap-x snap-mandatory scroll-pl-[var(--gutter)] gap-6 overflow-x-auto px-[var(--gutter)] pb-2 sm:mx-0 sm:scroll-pl-0 sm:px-0"
+            >
+              {events.map((ev, i) => {
+                const badge = getBadge(ev.audience);
+                return (
+                <Reveal
+                  key={ev.id}
+                  delay={i * 100}
+                  tilt
+                  data-card
+                  className="group relative flex w-[80vw] shrink-0 snap-start flex-col overflow-hidden rounded-2xl keep-radius border border-line-soft bg-surface hover:-translate-y-1.5 hover:border-primary-mist hover:shadow-lg sm:w-[calc(50%-12px)] lg:w-[calc((100%-48px)/3)]"
+                >
+                  <div className="relative h-48 overflow-hidden bg-bg-slab">
+                    {(ev.cover_image || ev.image_url) && (
+                      <img
+                        src={ev.cover_image || ev.image_url}
+                        alt={ev.title}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
                       />
-                      {getDisplayDate(ev)}
+                    )}
+                    <span
+                      className={`absolute top-4 left-4 rounded-full px-3.5 py-1.5 text-[10px] font-semibold tracking-[0.16em] uppercase ${badge.cls}`}
+                    >
+                      {badge.label}
                     </span>
-                    {ev.location && (
+                  </div>
+
+                  <div className="flex flex-1 flex-col p-6">
+                    <h3 className="font-heading text-xl leading-snug font-semibold text-ink">
+                      {ev.title}
+                    </h3>
+                    {ev.description && (
+                      <p className="mt-2.5 line-clamp-2 text-[14.5px] leading-relaxed text-muted">
+                        {ev.description}
+                      </p>
+                    )}
+                    <div className="mt-4 flex flex-col gap-1.5 text-[13.5px] text-ink-soft">
                       <span className="flex items-center gap-2">
-                        <MapPin
+                        <CalendarBlank
                           size={14}
                           weight="duotone"
                           className="text-gold-deep"
                         />
-                        {ev.location}
+                        {getDisplayDate(ev)}
                       </span>
-                    )}
+                      {ev.location && (
+                        <span className="flex items-center gap-2">
+                          <MapPin
+                            size={14}
+                            weight="duotone"
+                            className="text-gold-deep"
+                          />
+                          {ev.location}
+                        </span>
+                      )}
+                    </div>
+                    <Link
+                      to={`/events/${ev.slug}`}
+                      className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-primary px-6 py-3 font-heading text-[13px] font-medium text-white transition-all duration-300 group-hover:bg-primary-dark"
+                    >
+                      View Details
+                      <ArrowRight size={13} weight="bold" />
+                    </Link>
                   </div>
+
+                  {/* Whole card is tappable — the button above stays visible. */}
                   <Link
                     to={`/events/${ev.slug}`}
-                    className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-primary-deep px-6 py-3 font-heading text-[13px] font-medium text-white transition-all duration-300 group-hover:bg-primary"
-                  >
-                    View Details
-                    <ArrowRight size={13} weight="bold" />
-                  </Link>
-                </div>
-              </Reveal>
+                    className="absolute inset-0 z-10"
+                    aria-label={`View ${ev.title}`}
+                  />
+                </Reveal>
+                );
+              })}
+            </div>
+
+            {/* Chevrons pinned to the sides of the track */}
+            <button
+              type="button"
+              onClick={() => scrollByCard(-1)}
+              disabled={!canPrev}
+              aria-label="Previous events"
+              className="absolute top-1/2 left-1 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-line/60 bg-surface/95 text-ink shadow-md backdrop-blur transition-all duration-300 hover:border-primary hover:bg-primary hover:text-white disabled:pointer-events-none disabled:opacity-30 sm:left-2"
+            >
+              <CaretLeft size={16} weight="bold" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollByCard(1)}
+              disabled={!canNext}
+              aria-label="Next events"
+              className="absolute top-1/2 right-1 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-line/60 bg-surface/95 text-ink shadow-md backdrop-blur transition-all duration-300 hover:border-primary hover:bg-primary hover:text-white disabled:pointer-events-none disabled:opacity-30 sm:right-2"
+            >
+              <CaretRight size={16} weight="bold" />
+            </button>
+          </div>
+        )}
+
+        {/* Dot indicators — one per card */}
+        {!loading && events.length > 1 && (
+          <div className="mt-6 flex items-center justify-center gap-2">
+            {events.map((ev, i) => (
+              <button
+                key={ev.id}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Show event ${i + 1} of ${events.length}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  active === i
+                    ? "w-7 bg-primary"
+                    : "w-2 bg-primary/30 hover:bg-primary/60"
+                }`}
+              />
             ))}
           </div>
         )}

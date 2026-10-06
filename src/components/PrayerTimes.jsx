@@ -1,6 +1,5 @@
 import Reveal from "./Reveal";
 import PrayerTimesWidget from "./PrayerTimesWidget";
-import pattern from "../assets/background.png";
 
 export default function PrayerTimes() {
   return (
@@ -8,12 +7,6 @@ export default function PrayerTimes() {
       className="section relative overflow-hidden bg-primary-deep"
       id="prayer"
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{ backgroundImage: `url(${pattern})`, backgroundSize: "560px auto" }}
-      />
-
       <div className="container relative">
         <Reveal className="section-head">
           <span className="eyebrow">Daily Schedule</span>

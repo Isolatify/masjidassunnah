@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
 import { SITE, SOCIALS } from "../config";
 import { useSettings } from "../lib/siteSettings";
 import logoWhite from "../assets/logo-white.png";
-import pattern from "../assets/background.png";
 
 const SOCIAL_ITEMS = [
   { name: SOCIALS.facebook.name, url: SOCIALS.facebook.url, icon: FacebookLogo },
@@ -71,13 +70,9 @@ export default function Footer() {
   const siteName = settings.site?.name || SITE.name;
   return (
     <footer className="relative overflow-hidden bg-primary-deep text-white/75">
-      <div
+      <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage: `url(${pattern})`,
-          backgroundSize: "560px auto",
-        }}
+        className="pattern-overlay pattern-overlay--gold pointer-events-none absolute inset-0"
       />
 
       <div className="container relative pt-20 pb-10 md:pt-24">
@@ -92,9 +87,9 @@ export default function Footer() {
               />
             </Link>
             <p className="mt-6 text-[15px] leading-relaxed text-white/60">
-              Serving the Muslim community of Lakemba and Sydney — a house of
-              worship, a courtyard of learning, upon the Qur'an and the authentic
-              Sunnah.
+              Serving the Muslim community of Lakemba and greater Sydney —
+              five daily prayers, Jumu'ah, classes and community care, upon
+              the Qur'an and the authentic Sunnah.
             </p>
             <div className="mt-7 flex gap-3">
               {socialItems.map((s) => (

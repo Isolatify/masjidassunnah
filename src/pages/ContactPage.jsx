@@ -15,7 +15,6 @@ import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import Tilt3D from "../components/Tilt3D";
 import useJumuah from "../lib/useJumuah";
-import pattern from "../assets/background.png";
 
 const CARDS = [
   {
@@ -372,14 +371,6 @@ export default function ContactPage() {
 
         {/* ── Socials ── */}
         <section className="relative overflow-hidden bg-primary-deep py-14">
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.05]"
-            style={{
-              backgroundImage: `url(${pattern})`,
-              backgroundSize: "560px auto",
-            }}
-          />
           <div className="container relative flex flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
             <Reveal>
               <p className="font-heading text-[17px] font-medium text-white">

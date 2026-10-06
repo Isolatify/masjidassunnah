@@ -38,7 +38,7 @@ export default function PrayerTimesPage() {
 
       <main id="page">
         {/* ── Timetable ── */}
-        <section className="relative isolate overflow-hidden bg-primary-deep py-[var(--section-space)]">
+        <section className="section relative isolate overflow-hidden border-t border-gold/30 bg-primary-deep">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0"
@@ -120,7 +120,7 @@ export default function PrayerTimesPage() {
 
               <div className="lg:col-span-6">
                 <Reveal delay={160}>
-                  <div className="relative overflow-hidden rounded-3xl border border-line-soft bg-surface shadow-lg">
+                  <div className="relative overflow-hidden rounded-3xl keep-radius border border-line-soft bg-surface shadow-lg">
                     <div className="bg-gradient-to-br from-primary via-primary-dark to-primary-deep px-8 py-10 text-white md:px-10 md:py-12">
                       <p className="text-[11px] font-medium tracking-[0.3em] text-gold uppercase">
                         Every Friday

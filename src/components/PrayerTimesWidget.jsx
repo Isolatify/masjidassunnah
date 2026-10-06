@@ -125,7 +125,7 @@ export default function PrayerTimesWidget() {
   const isToday = daysFromToday === 0;
 
   return (
-    <Reveal className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-white/10 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.6)] md:grid md:grid-cols-[minmax(0,340px)_1fr]">
+    <Reveal className="mx-auto max-w-5xl overflow-hidden rounded-3xl keep-radius border border-white/10 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.6)] md:grid md:grid-cols-[minmax(0,340px)_1fr]">
       {/* ── Next prayer panel ── */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-dark to-primary-deep p-8 text-white md:p-9">
         <div className="text-[11px] font-medium tracking-[0.26em] text-gold uppercase">
