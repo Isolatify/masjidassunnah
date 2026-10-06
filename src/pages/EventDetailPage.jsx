@@ -18,6 +18,8 @@ import {
 import Reveal from "../components/Reveal";
 import ImageLightbox from "../components/ImageLightbox";
 import { supabase } from "../lib/supabase";
+import { fetchWeek } from "../lib/prayerTimes";
+import { untilPhraseFor } from "../lib/eventTime";
 import defaultBg from "../assets/photos/hall-arches.jpg";
 
 const AUDIENCE_DOT = {
@@ -25,7 +27,7 @@ const AUDIENCE_DOT = {
   Brothers: "bg-primary-bright",
   Sisters: "bg-pink-400",
   Youth: "bg-blue-400",
-  Children: "bg-red-400",
+  Children: "bg-purple-400",
 };
 
 const PROSE =
@@ -43,29 +45,6 @@ const PROSE =
 
 function isFreeCost(cost) {
   return !cost || !cost.trim() || cost.trim().toLowerCase() === "free";
-}
-
-function untilPhraseFor(dateStr) {
-  if (!dateStr) return null;
-  const ms = new Date(dateStr + "T12:00:00").getTime() - Date.now();
-  if (ms <= 0) return "Today";
-  const sec = Math.floor(ms / 1000);
-  const units = [
-    [31536000, "year"],
-    [2592000, "month"],
-    [604800, "week"],
-    [86400, "day"],
-    [3600, "hour"],
-    [60, "minute"],
-    [1, "second"],
-  ];
-  for (const [size, name] of units) {
-    if (sec >= size) {
-      const n = Math.floor(sec / size);
-      return `${n} ${name}${n === 1 ? "" : "s"}`;
-    }
-  }
-  return "Moments";
 }
 
 function splitDuration(ms) {
@@ -148,6 +127,18 @@ export default function EventDetailPage() {
     return () => clearInterval(t);
   }, []);
 
+  // Masjid timetable — used to resolve "After Maghrib" style event times.
+  const [prayerWeek, setPrayerWeek] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    fetchWeek().then((w) => {
+      if (alive) setPrayerWeek(w);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   if (loading) {
     return (
       <div className="grid min-h-[70vh] place-items-center">
@@ -182,7 +173,7 @@ export default function EventDetailPage() {
   const tags = event.tags || [];
 
   const nextDate = dates[0]?.date_start;
-  const untilPhrase = untilPhraseFor(nextDate);
+  const untilPhrase = untilPhraseFor(dates[0] || null, prayerWeek);
 
   const hasRegister = !!(event.form_id || event.register_url);
   const respSettings = formInfo?.settings?.responses || {};

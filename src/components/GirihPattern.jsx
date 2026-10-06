@@ -16,7 +16,7 @@ export default function GirihPattern({ className = "" }) {
       height="100%"
       aria-hidden="true"
       className={className}
-      style={{ opacity: 0.7 }}
+      style={{ opacity: 0.15 }}
     >
       <defs>
         <pattern
