@@ -5,6 +5,7 @@ import {
   ArrowUpRight,
 } from "@phosphor-icons/react";
 import { SOCIALS } from "../config";
+import GirihPattern from "./GirihPattern";
 import Reveal from "./Reveal";
 
 const ITEMS = [
@@ -16,6 +17,7 @@ const ITEMS = [
 export default function Socials() {
   return (
     <section className="section relative overflow-hidden bg-primary" id="socials">
+      <GirihPattern className="pointer-events-none absolute inset-0" />
       <div className="container relative">
         <Reveal className="section-head">
           <span className="eyebrow">Follow Us</span>

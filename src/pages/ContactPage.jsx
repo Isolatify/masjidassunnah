@@ -14,6 +14,7 @@ import { SITE, MAPS, SOCIALS, PRAYER_WIDGET_URL } from "../config";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import Tilt3D from "../components/Tilt3D";
+import GirihPattern from "../components/GirihPattern";
 import useJumuah from "../lib/useJumuah";
 
 const CARDS = [
@@ -371,6 +372,7 @@ export default function ContactPage() {
 
         {/* ── Socials ── */}
         <section className="relative overflow-hidden bg-primary-deep py-14">
+          <GirihPattern className="pointer-events-none absolute inset-0" />
           <div className="container relative flex flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
             <Reveal>
               <p className="font-heading text-[17px] font-medium text-white">

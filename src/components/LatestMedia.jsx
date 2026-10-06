@@ -11,6 +11,7 @@ import {
 } from "@phosphor-icons/react";
 import { SOCIALS } from "../config";
 import { getLatestVideos } from "../lib/social";
+import GirihPattern from "./GirihPattern";
 import Reveal from "./Reveal";
 
 const SOCIAL_CARDS = [
@@ -230,6 +231,7 @@ export default function LatestMedia() {
         {/* Watch live band */}
         <Reveal delay={120}>
           <div className="relative mt-10 overflow-hidden rounded-2xl bg-primary-deep text-white">
+            <GirihPattern className="pointer-events-none absolute inset-0" />
           <div className="relative flex flex-col items-center justify-between gap-5 px-7 py-6 text-center sm:flex-row sm:text-left">
               <span className="flex items-center gap-3.5 text-[15px]">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 text-gold">

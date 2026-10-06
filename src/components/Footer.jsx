@@ -9,6 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import { SITE, SOCIALS } from "../config";
 import { useSettings } from "../lib/siteSettings";
+import GirihPattern from "./GirihPattern";
 import logoWhite from "../assets/logo-white.png";
 
 const SOCIAL_ITEMS = [
@@ -70,10 +71,7 @@ export default function Footer() {
   const siteName = settings.site?.name || SITE.name;
   return (
     <footer className="relative overflow-hidden bg-primary-deep text-white/75">
-      <span
-        aria-hidden
-        className="pattern-overlay pattern-overlay--gold pointer-events-none absolute inset-0"
-      />
+      <GirihPattern className="pointer-events-none absolute inset-0" />
 
       <div className="container relative pt-20 pb-10 md:pt-24">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">

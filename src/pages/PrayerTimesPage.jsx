@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import Reveal from "../components/Reveal";
 import PageHero from "../components/PageHero";
 import PrayerTimesWidget from "../components/PrayerTimesWidget";
+import GirihPattern from "../components/GirihPattern";
 import { PRAYER_WIDGET_URL } from "../config";
 import bgImage from "../assets/photos/prayer-hero.jpg";
 import {
@@ -38,15 +39,8 @@ export default function PrayerTimesPage() {
 
       <main id="page">
         {/* ── Timetable ── */}
-        <section className="section relative isolate overflow-hidden border-t border-gold/30 bg-primary-deep">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(70% 55% at 50% -10%, rgba(3,137,74,0.35), transparent 70%)",
-            }}
-          />
+        <section className="section relative isolate overflow-hidden border-t border-gold/30 bg-white">
+          <GirihPattern className="pointer-events-none absolute inset-0" />
           <div className="container relative">
             <PrayerTimesWidget />
           </div>
