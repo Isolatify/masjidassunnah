@@ -6,7 +6,7 @@ export default function NotFound() {
     <main id="page" className="relative grid min-h-[100svh] place-items-center overflow-hidden bg-primary-deep px-6 pt-24 pb-16 text-center">
       <span
         aria-hidden
-        className="pattern-overlay pattern-overlay--gold pointer-events-none absolute inset-0"
+          className="pattern-overlay pattern-overlay--gold pattern-overlay--below-header pointer-events-none absolute inset-0"
       />
       <div className="relative">
         <p className="rise text-[11px] font-medium tracking-[0.32em] text-gold uppercase">

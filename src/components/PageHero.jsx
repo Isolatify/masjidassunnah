@@ -15,7 +15,7 @@ export default function PageHero({ eyebrow, title, sub, bg }) {
       <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/85 via-primary-deep/55 to-primary-deep/95" />
       <span
         aria-hidden
-        className="pattern-overlay pattern-overlay--gold pointer-events-none absolute inset-0"
+          className="pattern-overlay pattern-overlay--gold pattern-overlay--below-header pointer-events-none absolute inset-0"
       />
 
       <div className="container relative z-10 pt-36 pb-16 md:pb-20">

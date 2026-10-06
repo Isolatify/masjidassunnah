@@ -113,7 +113,7 @@ export default function Hero() {
       {/* Islamic lattice over the tint */}
       <span
         aria-hidden
-        className="pattern-overlay pattern-overlay--gold pointer-events-none absolute inset-0"
+              className="pattern-overlay pattern-overlay--gold pattern-overlay--below-header pointer-events-none absolute inset-0"
       />
 
       <div className="container relative z-10 pt-36 pb-16 md:pb-20">
