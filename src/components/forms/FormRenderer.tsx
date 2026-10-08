@@ -36,13 +36,14 @@ import {
 } from "../../lib/forms";
 import { metaFor } from "./meta";
 import PhoneInput from "./PhoneInput";
+import { ADMIN_URL } from "../../lib/adminUrl";
 
 type Variant = "jff" | "tf";
 type Stage = "welcome" | "questions";
 type Page = { sec: SectionInfo; fields: FormField[] };
 
 const OTHER_PREFIX = "__other__:";
-const API_BASE = String(import.meta.env?.VITE_ADMIN_URL || "").replace(/\/+$/, "");
+const API_BASE = ADMIN_URL;
 
 interface Props {
   form: FormRecord;

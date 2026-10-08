@@ -3,6 +3,7 @@
 // changes made in Admin → Settings take effect on the live site.
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { ADMIN_URL } from "./adminUrl";
 
 export const DEFAULTS = {
   site: {
@@ -35,8 +36,6 @@ export const DEFAULTS = {
   seo: { title: "Masjid As Sunnah", description: "", robots: "index,follow" },
   advanced: { cacheSeconds: 60, featureForms: true, featureEvents: true, featureDonations: true },
 };
-
-const ADMIN_URL = (import.meta.env.VITE_ADMIN_URL || "").replace(/\/$/, "");
 
 let cache = DEFAULTS;
 let loaded = false;

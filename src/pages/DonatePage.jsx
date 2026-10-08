@@ -9,12 +9,11 @@ import {
 import { useSearchParams } from "react-router-dom";
 import { SITE } from "../config";
 import { useSettings } from "../lib/siteSettings";
+import { ADMIN_URL } from "../lib/adminUrl";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import StripeBadge from "../components/StripeBadge";
 import terminalPhoto from "../assets/photos/donation-terminal.jpg";
-
-const ADMIN_URL = (import.meta.env.VITE_ADMIN_URL || "").replace(/\/$/, "");
 
 const AMOUNTS = [25, 50, 100, 250];
 
