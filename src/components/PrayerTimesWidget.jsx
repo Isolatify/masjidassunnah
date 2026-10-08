@@ -34,13 +34,6 @@ function addDaysLocal(date, days) {
   return d;
 }
 
-/* MM:SS under an hour, otherwise HH:MM — always a single gold pair. */
-function bigPair(cd) {
-  if (!cd) return null;
-  const total = (+cd.hours) * 3600 + (+cd.minutes) * 60 + (+cd.seconds);
-  return total < 3600 ? [cd.minutes, cd.seconds] : [cd.hours, cd.minutes];
-}
-
 export default function PrayerTimesWidget() {
   const [week, setWeek] = useState(null);
   const [navDate, setNavDate] = useState(startOfToday());
@@ -80,6 +73,8 @@ export default function PrayerTimesWidget() {
       cd,
       sub,
       phase: state.phase,
+      showIqamah: state.showIqamah && !!cd,
+      iqamah: state.prayer?.iqamah,
       eyebrow:
         state.phase === "iqamah"
           ? "Athan Called"
@@ -96,6 +91,8 @@ export default function PrayerTimesWidget() {
       cd,
       sub: `until the Athan at ${fajr.athan}`,
       phase: "athan",
+      showIqamah: !!cd,
+      iqamah: fajr.iqamah,
       eyebrow: cd ? "Next Prayer" : "Today",
     };
     activeKey = "fajr";
@@ -107,6 +104,8 @@ export default function PrayerTimesWidget() {
       cd,
       sub: `since the Iqamah at ${isha.iqamah}`,
       phase: "past",
+      showIqamah: false,
+      iqamah: null,
       eyebrow: "Today",
     };
     activeKey = "isha";
@@ -116,7 +115,6 @@ export default function PrayerTimesWidget() {
   const goTomorrow = () => setNavDate(addDaysLocal(startOfToday(), 1));
   const isToday = daysFromToday === 0;
   const isTomorrow = daysFromToday === 1;
-  const pair = bigPair(left.cd);
 
   const tabCls = (on) =>
     `transition-colors ${
@@ -149,14 +147,24 @@ export default function PrayerTimesWidget() {
           </span>
         </div>
 
-        {pair ? (
+        {left.cd ? (
           <>
-            <div className="mt-6 font-display text-[clamp(46px,6.5vw,64px)] leading-none font-semibold tabular-nums text-gold">
-              {pair[0]}
-              <span className="mx-0.5 text-[0.6em] font-normal text-gold/55">
-                :
+            <div className="mt-6 font-display text-[clamp(20px,5vw,28px)] leading-none font-semibold whitespace-nowrap tabular-nums text-gold">
+              {left.cd.hours}
+              <span className="text-[0.55em] font-medium text-gold/65">
+                {" hrs "}
               </span>
-              {pair[1]}
+              {left.cd.minutes}
+              <span className="text-[0.55em] font-medium text-gold/65">
+                {" mins "}
+              </span>
+              <span className="text-[0.55em] font-medium text-gold/65">
+                {"& "}
+              </span>
+              {left.cd.seconds}
+              <span className="text-[0.55em] font-medium text-gold/65">
+                {" secs"}
+              </span>
             </div>
             <p className="mt-4 text-[14.5px] text-white/70">{left.sub}</p>
           </>
@@ -166,14 +174,16 @@ export default function PrayerTimesWidget() {
           </p>
         )}
 
-        <div className="mt-8 flex items-center gap-3">
-          <span className="text-[11px] font-semibold tracking-[0.26em] text-white/40 uppercase">
-            Athan
-          </span>
-          <span className="text-[14px] font-medium tabular-nums text-white/85">
-            {left.prayer.athan}
-          </span>
-        </div>
+        {left.showIqamah && (
+          <div className="mt-8 flex items-center gap-3">
+            <span className="text-[11px] font-semibold tracking-[0.26em] text-white/40 uppercase">
+              Iqamah
+            </span>
+            <span className="text-[14px] font-medium tabular-nums text-white/85">
+              {left.iqamah}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* ── Times table ── */}
@@ -208,7 +218,6 @@ export default function PrayerTimesWidget() {
         {prayers.map((p, i) => {
           const Icon = ICONS[p.name] || Sun;
           const active = p.key === activeKey;
-          const sunrise = p.key === "sunrise";
           return (
             <div
               key={p.name}
@@ -251,7 +260,7 @@ export default function PrayerTimesWidget() {
                   active ? "text-ink-soft" : "text-muted"
                 }`}
               >
-                {sunrise ? "Sunrise" : p.athan}
+                {p.athan}
               </span>
 
               <span
@@ -259,7 +268,7 @@ export default function PrayerTimesWidget() {
                   active ? "text-primary-soft" : "text-ink"
                 }`}
               >
-                {sunrise ? p.athan : p.iqamah}
+                {p.iqamah}
               </span>
             </div>
           );
