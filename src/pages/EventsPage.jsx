@@ -16,6 +16,7 @@ import {
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { supabase } from "../lib/supabase";
+import { eventOccurrences, recurringLabel } from "../lib/eventTime";
 import { useSettings } from "../lib/siteSettings";
 import heroBg from "../assets/photos/hall-people.webp";
 
@@ -71,8 +72,20 @@ function formatDate(dateStr) {
 }
 
 function getDisplayDate(ev) {
-  if (ev.dates_json?.[0]?.display) return ev.dates_json[0].display;
-  if (ev.recurring_pattern) return ev.recurring_pattern;
+  const first = ev.dates_json?.[0];
+  if (first?.display) {
+    const label = recurringLabel(first);
+    return label ? `${first.display} · ${label}` : first.display;
+  }
+  if (ev.recurring_pattern || ev.date_type === "recurring") {
+    const label = recurringLabel({
+      recurring_pattern: ev.recurring_pattern,
+      date_type: ev.date_type,
+      date_start: ev.date_start,
+      weekdays: first?.weekdays,
+    });
+    if (label) return label;
+  }
   if (ev.date_end && ev.date_end !== ev.date_start)
     return `${formatDate(ev.date_start)} – ${formatDate(ev.date_end)}`;
   return formatDate(ev.date_start);
@@ -105,34 +118,10 @@ function hasRegisterOption(ev) {
   return !!(ev.form_id || ev.register_url);
 }
 
-/* Every calendar day an event spans (capped to avoid runaway ranges). */
+/* Every calendar day an event spans: ranges expanded day-by-day, recurring
+   patterns projected ±1 year around today (see lib/eventTime.js). */
 function occurrences(ev) {
-  const out = [];
-  const push = (start, end) => {
-    if (!start) return;
-    const s = new Date(start + "T12:00:00");
-    if (isNaN(s.getTime())) return;
-    let e = s;
-    if (end && end !== start) {
-      const parsed = new Date(end + "T12:00:00");
-      if (!isNaN(parsed.getTime())) e = parsed;
-    }
-    let d = new Date(s);
-    let guard = 0;
-    while (d <= e && guard < 62) {
-      out.push(new Date(d));
-      d.setDate(d.getDate() + 1);
-      guard += 1;
-    }
-  };
-
-  const list = ev.dates_json?.length
-    ? ev.dates_json
-    : [{ date_start: ev.date_start, date_end: ev.date_end }];
-  list.forEach((x) => push(x.date_start, x.date_end));
-
-  if (!out.length && ev.date_start) push(ev.date_start, ev.date_end);
-  return out;
+  return eventOccurrences(ev);
 }
 
 function eventDates(ev) {

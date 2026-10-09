@@ -20,7 +20,7 @@ import ImageLightbox from "../components/ImageLightbox";
 import GirihPattern from "../components/GirihPattern";
 import { supabase } from "../lib/supabase";
 import { fetchWeek } from "../lib/prayerTimes";
-import { untilPhraseFor } from "../lib/eventTime";
+import { untilPhraseFor, nextEventDate, isRecurringEntry, recurringLabel } from "../lib/eventTime";
 import defaultBg from "../assets/photos/hall-arches.jpg";
 
 const AUDIENCE_DOT = {
@@ -81,6 +81,8 @@ export default function EventDetailPage() {
   const [openFaq, setOpenFaq] = useState(null);
   const [formInfo, setFormInfo] = useState(null);
   const [lightbox, setLightbox] = useState(false);
+  // When the cover already fits a 1920×1080 box, show it uncropped.
+  const [coverFit, setCoverFit] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -165,7 +167,18 @@ export default function EventDetailPage() {
     );
   }
 
-  const dates = event.dates_json || [];
+  const dates = event.dates_json?.length
+    ? event.dates_json
+    : event.date_start
+      ? [
+          {
+            date_start: event.date_start,
+            date_end: event.date_end || null,
+            date_type: event.date_type || null,
+            recurring_pattern: event.recurring_pattern || null,
+          },
+        ]
+      : [];
   const faq = event.faq || [];
   const audience = event.audience || [];
   const links = event.links || [];
@@ -175,13 +188,21 @@ export default function EventDetailPage() {
   const tags = event.tags || [];
 
   const todayStr = new Date().toLocaleDateString("en-CA");
-  const primaryIdx = Math.max(
-    0,
-    dates.findIndex((d) => d?.date_start && d.date_start >= todayStr),
-  );
-  const primaryDate = dates[primaryIdx] || null;
-  const nextDate = primaryDate?.date_start;
-  const untilPhrase = untilPhraseFor(primaryDate, prayerWeek);
+  const nextRes = nextEventDate(dates, todayStr);
+  const primaryIdx = nextRes ? nextRes.idx : -1;
+  const primaryDate = nextRes ? dates[nextRes.idx] : dates[0] || null;
+  const recurringPrimary = !!primaryDate && isRecurringEntry(primaryDate);
+  const nextDate = nextRes?.dateStr || dates[0]?.date_start || null;
+  const untilPhrase = nextRes
+    ? untilPhraseFor({ ...dates[nextRes.idx], date_start: nextRes.dateStr }, prayerWeek)
+    : null;
+  const gcalStart = nextDate || "";
+  const gcalEnd =
+    primaryDate?.date_end &&
+    primaryDate.date_end !== primaryDate.date_start &&
+    primaryDate.date_end >= gcalStart
+      ? primaryDate.date_end
+      : gcalStart;
 
   const hasRegister = !!(event.form_id || event.register_url);
   const respSettings = formInfo?.settings?.responses || {};
@@ -239,6 +260,22 @@ export default function EventDetailPage() {
     return d.toLocaleDateString("en-AU", { weekday: "long" });
   }
 
+  /* One human line for the primary date: start–end for ranges, the next
+     occurrence + recurrence label ("· Every Saturday") for recurring. */
+  const whenText = !primaryDate
+    ? ""
+    : primaryDate.date_start
+      ? `${formatDateShort(primaryDate.date_start)}${
+          primaryDate.date_end && primaryDate.date_end !== primaryDate.date_start
+            ? ` – ${formatDateShort(primaryDate.date_end)}`
+            : ""
+        }${
+          recurringPrimary && recurringLabel(primaryDate)
+            ? ` · ${recurringLabel(primaryDate)}`
+            : ""
+        }`
+      : primaryDate.display || "";
+
   function handleShare() {
     if (navigator.share) {
       navigator.share({ title: event.title, url: window.location.href });
@@ -277,7 +314,15 @@ export default function EventDetailPage() {
           <img
             src={coverImage || defaultBg}
             alt={event.title}
-            className="kenburns h-[min(56.25vw,780px)] w-full object-cover object-center"
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              setCoverFit(
+                img.naturalWidth > 0 &&
+                  img.naturalWidth <= 1920 &&
+                  img.naturalHeight <= 1080,
+              );
+            }}
+            className={`${coverFit ? "object-contain" : "kenburns object-cover"} h-[min(56.25vw,780px)] w-full object-center`}
           />
         </button>
       </section>
@@ -327,11 +372,7 @@ export default function EventDetailPage() {
               style={{ animationDelay: "0.28s" }}
             >
               <CalendarBlank size={16} weight="duotone" className="text-gold" />
-              {primaryDate.date_start
-                ? `${formatDateShort(primaryDate.date_start)}${
-                    primaryDate.date_end ? ` – ${formatDateShort(primaryDate.date_end)}` : ""
-                  }`
-                : primaryDate.display}
+              {whenText}
             </div>
           )}
         </div>
@@ -458,8 +499,8 @@ export default function EventDetailPage() {
                                   {d.date_end
                                     ? ` – ${formatDateShort(d.date_end)}`
                                     : ""}
-                                  {d.recurring_pattern
-                                    ? ` · ${d.recurring_pattern}`
+                                  {recurringLabel(d)
+                                    ? ` · ${recurringLabel(d)}`
                                     : ""}
                                 </div>
                               </div>
@@ -569,13 +610,7 @@ export default function EventDetailPage() {
                           cardRow(
                             CalendarBlank,
                             "When",
-                            primaryDate.date_start
-                              ? `${formatDateShort(primaryDate.date_start)}${
-                                  primaryDate.date_end
-                                    ? ` – ${formatDateShort(primaryDate.date_end)}`
-                                    : ""
-                                }`
-                              : primaryDate.display,
+                            whenText,
                           )}
                         {event.location && cardRow(MapPin, "Where", event.location)}
                         {!isFreeCost(event.cost) &&
@@ -683,10 +718,8 @@ export default function EventDetailPage() {
                           <a
                             href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
                               event.title,
-                            )}&dates=${nextDate?.replace(/-/g, "") || ""}/${(
-                              event.date_end ||
-                              nextDate ||
-                              ""
+                            )}&dates=${(gcalStart || "").replace(/-/g, "")}/${(
+                              gcalEnd || ""
                             ).replace(/-/g, "")}&location=${encodeURIComponent(
                               event.location || "",
                             )}`}

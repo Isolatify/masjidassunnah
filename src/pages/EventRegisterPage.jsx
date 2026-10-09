@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, CalendarBlank } from "@phosphor-icons/react";
 import { supabase } from "../lib/supabase";
+import { nextEventDate, effectiveEntries, recurringLabel, isRecurringEntry } from "../lib/eventTime";
 import FormRenderer from "../components/forms/FormRenderer";
 import defaultBg from "../assets/photos/hall-arches.jpg";
 import "../form.css";
@@ -103,12 +104,17 @@ export default function EventRegisterPage() {
     );
   }
 
-  const dates = event.dates_json || [];
-  const firstDate = dates[0]?.date_start || event.date_start;
-  const dateLabel = firstDate
-    ? `${formatDateShort(firstDate)}${
-        (dates[0]?.date_end || event.date_end)
-          ? ` – ${formatDateShort(dates[0]?.date_end || event.date_end)}`
+  const entries = effectiveEntries(event);
+  const nextRes = nextEventDate(entries);
+  const primary = nextRes ? entries[nextRes.idx] : entries[0] || null;
+  const dateLabel = primary
+    ? `${formatDateShort(nextRes ? nextRes.dateStr : primary.date_start)}${
+        primary.date_end && primary.date_end !== primary.date_start
+          ? ` – ${formatDateShort(primary.date_end)}`
+          : ""
+      }${
+        isRecurringEntry(primary) && recurringLabel(primary)
+          ? ` · ${recurringLabel(primary)}`
           : ""
       }`
     : "";

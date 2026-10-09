@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react";
 import Reveal from "./Reveal";
 import { supabase } from "../lib/supabase";
+import { eventNextDate, recurringLabel } from "../lib/eventTime";
 import { useSettings } from "../lib/siteSettings";
 
 const DEFAULT_MAX_EVENTS = 7;
@@ -36,52 +37,17 @@ function getBadge(audience) {
   return { label: a.join(", ").toUpperCase(), cls: neutral };
 }
 
-/* An event counts as upcoming if any of its dates are today or later. */
+/* An event counts as upcoming if it has an active date today or later
+   (in-progress ranges and recurring patterns included). */
 function isUpcoming(ev) {
-  const today = new Date();
-  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const list = ev.dates_json?.length
-    ? ev.dates_json
-    : [{ date_start: ev.date_start, date_end: ev.date_end }];
-  const spans = list.some((x) => {
-    if (!x?.date_start) return false;
-    const s = new Date(x.date_start + "T12:00:00");
-    if (isNaN(s.getTime())) return false;
-    const e =
-      x.date_end && x.date_end !== x.date_start
-        ? new Date(x.date_end + "T12:00:00")
-        : s;
-    return !isNaN(e.getTime()) && e >= start;
-  });
-  if (spans) return true;
-  if (ev.date_start) {
-    const s = new Date(ev.date_start + "T12:00:00");
-    const e =
-      ev.date_end && ev.date_end !== ev.date_start
-        ? new Date(ev.date_end + "T12:00:00")
-        : s;
-    return !isNaN(e.getTime()) && e >= start;
-  }
-  return false;
+  return !!eventNextDate(ev);
 }
 
 function nextDate(ev) {
-  const today = new Date();
-  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const list = ev.dates_json?.length
-    ? ev.dates_json
-    : [{ date_start: ev.date_start, date_end: ev.date_end }];
-  const days = [];
-  list.forEach((x) => {
-    if (!x?.date_start) return;
-    const s = new Date(x.date_start + "T12:00:00");
-    if (!isNaN(s.getTime()) && s >= start) days.push(s.getTime());
-  });
-  if (ev.date_start) {
-    const s = new Date(ev.date_start + "T12:00:00");
-    if (!isNaN(s.getTime()) && s >= start) days.push(s.getTime());
-  }
-  return days.length ? Math.min(...days) : Number.MAX_SAFE_INTEGER;
+  const res = eventNextDate(ev);
+  return res
+    ? new Date(res.dateStr + "T12:00:00").getTime()
+    : Number.MAX_SAFE_INTEGER;
 }
 
 export default function Events() {
@@ -139,7 +105,7 @@ export default function Events() {
     supabase
       .from("events")
       .select(
-        "id, title, slug, description, cover_image, image_url, date_start, date_end, audience, dates_json, location"
+        "id, title, slug, description, cover_image, image_url, date_start, date_end, date_type, recurring_pattern, audience, dates_json, location"
       )
       .eq("status", "published")
       .order("date_start", { ascending: false })
@@ -163,7 +129,20 @@ export default function Events() {
   }
 
   function getDisplayDate(ev) {
-    if (ev.dates_json?.[0]?.display) return ev.dates_json[0].display;
+    const first = ev.dates_json?.[0];
+    if (first?.display) {
+      const label = recurringLabel(first);
+      return label ? `${first.display} · ${label}` : first.display;
+    }
+    if (ev.recurring_pattern || ev.date_type === "recurring") {
+      const label = recurringLabel({
+        recurring_pattern: ev.recurring_pattern,
+        date_type: ev.date_type,
+        date_start: ev.date_start,
+        weekdays: first?.weekdays,
+      });
+      if (label) return label;
+    }
     if (ev.date_end && ev.date_end !== ev.date_start)
       return `${formatDate(ev.date_start)} – ${formatDate(ev.date_end)}`;
     return formatDate(ev.date_start);
