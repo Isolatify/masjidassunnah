@@ -20,7 +20,7 @@ import ImageLightbox from "../components/ImageLightbox";
 import GirihPattern from "../components/GirihPattern";
 import { supabase } from "../lib/supabase";
 import { fetchWeek } from "../lib/prayerTimes";
-import { untilPhraseFor, nextEventDate, isRecurringEntry, recurringLabel } from "../lib/eventTime";
+import { untilPhraseFor, nextEventDate, isRecurringEntry, recurringLabel, entryOccurrences } from "../lib/eventTime";
 import defaultBg from "../assets/photos/hall-arches.jpg";
 
 const AUDIENCE_DOT = {
@@ -276,6 +276,68 @@ export default function EventDetailPage() {
         }`
       : primaryDate.display || "";
 
+  /* Expand recurring entries into upcoming dates and surface the soonest few
+     across ALL entries — capped at MAX_DATES total so several recurring
+     classes can't flood the list. Non-recurring entries pass through as a
+     single row each. */
+  const MAX_DATES = 4;
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const timeLabel = (e) =>
+    e.after_prayer
+      ? e.after_prayer
+      : e.time_start
+        ? e.time_end
+          ? `${e.time_start} – ${e.time_end}`
+          : e.time_start
+        : "";
+  const candidates = [];
+  dates.forEach((entry, srcIdx) => {
+    if (isRecurringEntry(entry)) {
+      entryOccurrences(entry)
+        .filter((d) => d >= todayStart)
+        .slice(0, MAX_DATES)
+        .forEach((D) => {
+          candidates.push({
+            __src: srcIdx,
+            dateObj: D,
+            title: D.toLocaleDateString("en-AU", {
+              weekday: "long",
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }),
+            sub: [timeLabel(entry), recurringLabel(entry)].filter(Boolean).join(" · "),
+          });
+        });
+    } else {
+      const dateObj = entry.date_start ? new Date(entry.date_start + "T12:00:00") : null;
+      candidates.push({
+        __src: srcIdx,
+        dateObj,
+        title:
+          entry.display ||
+          `${formatDayName(entry.date_start)}${dateObj ? ` ${dateObj.getFullYear()}` : ""}`,
+        sub: `${entry.date_start ? formatDateShort(entry.date_start) : ""}${
+          entry.date_end ? ` – ${formatDateShort(entry.date_end)}` : ""
+        }${recurringLabel(entry) ? ` · ${recurringLabel(entry)}` : ""}`,
+      });
+    }
+  });
+  /* Soonest upcoming first; rows without a concrete date sink to the end. */
+  candidates.sort((a, b) => {
+    const aPast = a.dateObj ? a.dateObj < todayStart : false;
+    const bPast = b.dateObj ? b.dateObj < todayStart : false;
+    if (aPast !== bPast) return aPast ? 1 : -1;
+    if (!a.dateObj && !b.dateObj) return 0;
+    if (!a.dateObj) return 1;
+    if (!b.dateObj) return -1;
+    return a.dateObj - b.dateObj;
+  });
+  const displayList = candidates.slice(0, MAX_DATES);
+  const nextDisplayIdx =
+    primaryIdx >= 0 ? displayList.findIndex((r) => r.__src === primaryIdx) : -1;
+
   function handleShare() {
     if (navigator.share) {
       navigator.share({ title: event.title, url: window.location.href });
@@ -309,8 +371,16 @@ export default function EventDetailPage() {
           type="button"
           onClick={() => event.full_image && setLightbox(true)}
           aria-label="View full size image"
-          className={`block w-full ${event.full_image ? "cursor-zoom-in" : "cursor-default"}`}
+          className={`relative block w-full overflow-hidden ${event.full_image ? "cursor-zoom-in" : "cursor-default"}`}
         >
+          {coverFit && (
+            <img
+              src={coverImage || defaultBg}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
+            />
+          )}
           <img
             src={coverImage || defaultBg}
             alt={event.title}
@@ -322,7 +392,7 @@ export default function EventDetailPage() {
                   img.naturalHeight <= 1080,
               );
             }}
-            className={`${coverFit ? "object-contain" : "kenburns object-cover"} h-[min(56.25vw,780px)] w-full object-center`}
+            className={`relative ${coverFit ? "object-contain" : "kenburns object-cover"} h-[min(56.25vw,780px)] w-full object-center`}
           />
         </button>
       </section>
@@ -457,11 +527,8 @@ export default function EventDetailPage() {
                     <div className="mt-10">
                       <span className="eyebrow">Dates</span>
                       <div className="mt-4 overflow-hidden border border-line-soft bg-surface">
-                        {dates.map((d, i) => {
-                          const dateObj = d.date_start
-                            ? new Date(d.date_start + "T12:00:00")
-                            : null;
-                          const isNext = i === primaryIdx && untilPhrase !== null;
+                        {displayList.map((row, i) => {
+                          const isNext = i === nextDisplayIdx && untilPhrase !== null;
                           return (
                             <div
                               key={i}
@@ -477,11 +544,11 @@ export default function EventDetailPage() {
                               )}
                               <span className="grid h-16 w-16 shrink-0 place-items-center border border-line bg-bg text-center leading-none">
                                 <span className="font-display text-2xl font-bold text-primary">
-                                  {dateObj ? dateObj.getDate() : "–"}
+                                  {row.dateObj ? row.dateObj.getDate() : "–"}
                                 </span>
                                 <span className="mt-1 text-[10px] font-semibold tracking-[0.14em] text-muted uppercase">
-                                  {dateObj
-                                    ? dateObj.toLocaleDateString("en-AU", {
+                                  {row.dateObj
+                                    ? row.dateObj.toLocaleDateString("en-AU", {
                                         month: "short",
                                       })
                                     : ""}
@@ -489,19 +556,10 @@ export default function EventDetailPage() {
                               </span>
                               <div className="min-w-0 flex-1">
                                 <div className="font-heading text-[15.5px] font-semibold">
-                                  {d.display ||
-                                    `${formatDayName(d.date_start)}${
-                                      dateObj ? ` ${dateObj.getFullYear()}` : ""
-                                    }`}
+                                  {row.title}
                                 </div>
                                 <div className="mt-0.5 text-[13.5px] text-muted">
-                                  {d.date_start && formatDateShort(d.date_start)}
-                                  {d.date_end
-                                    ? ` – ${formatDateShort(d.date_end)}`
-                                    : ""}
-                                  {recurringLabel(d)
-                                    ? ` · ${recurringLabel(d)}`
-                                    : ""}
+                                  {row.sub}
                                 </div>
                               </div>
                               {isNext && (
@@ -576,7 +634,7 @@ export default function EventDetailPage() {
 
               {/* Right: sidebar card (first on mobile) */}
               <div className="order-1 min-w-0 lg:order-2">
-                <Reveal delay={40}>
+                <Reveal delay={40} className="lg:h-full">
                   <div className="relative overflow-hidden bg-[#0c1510] text-white shadow-xl lg:sticky lg:top-28">
                     <GirihPattern className="pointer-events-none absolute inset-0" />
                     <div className="relative p-7 md:p-8">
