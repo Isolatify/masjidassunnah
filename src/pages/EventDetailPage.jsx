@@ -19,6 +19,7 @@ import Reveal from "../components/Reveal";
 import ImageLightbox from "../components/ImageLightbox";
 import GirihPattern from "../components/GirihPattern";
 import { supabase } from "../lib/supabase";
+import { ADMIN_URL } from "../lib/adminUrl";
 import { fetchWeek } from "../lib/prayerTimes";
 import { untilPhraseFor, nextEventDate, isRecurringEntry, recurringLabel, entryOccurrences } from "../lib/eventTime";
 import defaultBg from "../assets/photos/hall-arches.jpg";
@@ -95,7 +96,15 @@ export default function EventDetailPage() {
       .single()
       .then(({ data, error: err }) => {
         if (err || !data) setError("Event not found");
-        else setEvent(data);
+        else {
+          setEvent(data);
+          if (ADMIN_URL)
+            fetch(`${ADMIN_URL}/api/events/view`, {
+              method: "POST",
+              body: JSON.stringify({ event_id: data.id }),
+              keepalive: true,
+            }).catch(() => {});
+        }
       })
       .catch(() => setError("Failed to load event"))
       .finally(() => setLoading(false));
